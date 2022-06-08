@@ -19,7 +19,7 @@ class Connection():
             if cord_1.y < cord_2.y:
                 direction = "north"
             elif cord_1.y > cord_2.y:
-                deriction = "south"
+                direction = "south"
 
         else:
             deriction = None
@@ -29,4 +29,3 @@ class Connection():
 class Amino():
 
     def __init__(self, aminotype, cordinates):
-        
