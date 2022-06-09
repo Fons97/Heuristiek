@@ -2,8 +2,6 @@ import re
 
 def load_protein(filename, protein_number):
 
-    protein_number = '3'
-    filename = "protein.txt"
     aminoacids = []
     with open(filename) as file:
         while True:
