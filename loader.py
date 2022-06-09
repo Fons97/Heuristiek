@@ -1,7 +1,8 @@
+import re
 
+def load_protein(filename, protein_number):
 
-def load_protein(filename):
-
+    protein_number = '3'
     filename = "protein.txt"
     aminoacids = []
     with open(filename) as file:
@@ -10,6 +11,9 @@ def load_protein(filename):
             if line == "":
                 break
             stripped = line.rstrip("\n")
-            for amin in stripped:
-                aminoacids.append(amin)
+            if protein_number in stripped:
+                stripped = re.sub(r'[0-9]+', '', stripped)
+                stripped = re.sub(r' ', '', stripped)
+                for amin in stripped:
+                    aminoacids.append(amin)
     return aminoacids
