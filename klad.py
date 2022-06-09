@@ -2,6 +2,8 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+from loader import load_protein
+
 class Protein():
     def __init__(self, protein_string):
         self.string = protein_string
@@ -32,23 +34,8 @@ class Protein():
             if self.previous_move == 0:
                 self.previous_move = random.choice(self.move_options)
 
-            move = self.choose_move(self.previous_move)
-
-            while (self.x, self.y) in self.used_options:
-                move = self.choose_move(self.previous_move)
-                # print(move, index, self.x, self.y)
-
-                if move == -1:
-                    self.x = self.x - 1
-
-                elif move == 1:
-                    self.x = self.x + 1
-
-                elif move == -2:
-                    self.y = self.y - 1
-
-                elif move == 2:
-                    self.y = self.y + 1
+            move = self.check_move()
+            # try_move = self.choose_move(self.previous_move)
 
             self.previous_move = move
 
@@ -58,6 +45,35 @@ class Protein():
 
     def get_coordinates(self):
         return self.amino_dict
+
+    def check_move(self):
+        x = self.x
+        y = self.y
+
+        while True:
+            move = self.choose_move(self.previous_move)
+            # print(move, index, self.x, self.y)
+
+            if move == -1 and (x - 1, y) not in self.used_options:
+                x = x - 1
+                break
+
+            elif move == 1 and (x + 1, y) not in self.used_options:
+                x = x + 1
+                break
+
+            elif move == -2 and (x, y - 1) not in self.used_options:
+                y = y - 1
+                break
+
+            elif move == 2 and (x, y + 1) not in self.used_options:
+                y = y + 1
+                break
+
+        self.x = x
+        self.y = y
+        return (self.x, self.y)
+
 
 class AminoAcid():
     def __init__(self, amino):
@@ -80,7 +96,7 @@ class Algorithm():
 if __name__ == "__main__":
 
     # load string
-    string = "HHPHHHPHPHHHPH"
+    string = load_protein('protein.txt')
 
     # create protein object
     protein = Protein(string)
@@ -99,6 +115,8 @@ if __name__ == "__main__":
             i[0] = 'red'
         elif i[0] == 'P':
             i[0] = 'blue'
+        elif i[0] == 'C':
+            i[0] = 'green'
 
         x_values.append(i[1])
         y_values.append(i[2])
