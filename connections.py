@@ -3,9 +3,9 @@ class Connection():
     def __init__(self, amino_1, amino_2):
         self.amino_1 = amino_1
         self.amino_2 = amino_2
-        self.cordinates_1 = self.amino_1.cordinates
-        self.cordinates_2 = self.amino_2.cordinates
-        self.direction = get_orientation(self.cordinates_1, self.cordinates_2)
+        self.coordinates_1 = self.amino_1.coordinates
+        self.coordinates_2 = self.amino_2.coordinates
+        self.direction = get_orientation(self.coordinates_1, self.coordinates_2)
 
 
     def get_orientation(cord_1, cord_2):
@@ -13,7 +13,7 @@ class Connection():
             if cord_1.x > cord_2.x:
                 direction = "west"
             elif cord_1.x < cord_2.x:
-                deriction = "east"
+                direction = "east"
 
         elif cord_1.y != cord_2.y:
             if cord_1.y < cord_2.y:
@@ -22,10 +22,12 @@ class Connection():
                 direction = "south"
 
         else:
-            deriction = None
+            direction = None
 
         return direction
 
 class Amino():
 
-    def __init__(self, aminotype, cordinates):
+    def __init__(self, aminotype, coordinates):
+        self.aminotype = aminotype
+        self.coordinates = coordinates
