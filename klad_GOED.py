@@ -132,12 +132,13 @@ if __name__ == "__main__":
         
     score = 0
 
-
+    counting_variable = 0
     for amino_cords in h_list:
         amino_x, amino_y, amino_type, amino_index = amino_cords
 
+        counting_variable += 1
 
-        for compare_cords in h_list:
+        for compare_cords in h_list[counting_variable:]:
             compare_x, compare_y, compare_type, compare_index = compare_cords
 
             if amino_index - compare_index <= 1 and amino_index - compare_index >= -1:
@@ -161,9 +162,6 @@ if __name__ == "__main__":
             
         
 
-
-score = score / 2
-
 total_score = score
 print(total_score)
 plt.xticks(np.arange(min(x_values)-1, max(x_values)+1, 1.0))
@@ -171,4 +169,4 @@ plt.yticks(np.arange(min(y_values)-1, max(y_values)+1, 1.0))
 
 plt.plot(x_values, y_values, linestyle="solid", c="grey", zorder=1)
 
-# plt.show()
+plt.show()
