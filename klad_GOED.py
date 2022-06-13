@@ -129,6 +129,7 @@ if __name__ == "__main__":
 
         index += 1
 
+    #GEBRUIK VOOR SCORE!!!
         
     score = 0
 

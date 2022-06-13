@@ -14,7 +14,6 @@ class Protein():
         self.z = 0
         self.used_options = []
         self.score_list = []
-        self.move_list = []
 
     def choose_move(self, previous_move):
         '''
@@ -53,7 +52,7 @@ class Protein():
             move = self.check_move()
 
             self.previous_move = move
-
+            print(move, "COORDINATES")
             self.amino_dict[index] = [letter, self.x, self.y, self.z]
             self.used_options.append((self.x, self.y, self.z))
 
@@ -100,4 +99,4 @@ class Protein():
         self.y = y
         self.z = z
 
-        return (self.x, self.y, self.z)
+        return (self.x, self.y, self.z, move)
