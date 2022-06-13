@@ -11,7 +11,5 @@ def load_protein(filename, protein_number):
             stripped = line.rstrip("\n")
             if protein_number in stripped:
                 stripped = re.sub(r'[0-9]+', '', stripped)
-                stripped = re.sub(r' ', '', stripped)
-                for amin in stripped:
-                    aminoacids.append(amin)
+                aminoacids = re.sub(r' ', '', stripped)
     return aminoacids

@@ -1,9 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-from loader import load_protein
+from aminoacid import AminoAcid
 
 class Protein():
     def __init__(self, protein_string):
@@ -16,25 +14,36 @@ class Protein():
         self.z = 0
         self.used_options = []
         self.score_list = []
+        self.move_list = []
 
-    def choose_move(self, int):
-        if int == 1:
+    def choose_move(self, previous_move):
+        '''
+        Choose a move at random constrained by previous executed move 
+        Return move 
+        '''
+
+        if previous_move == 1:
             self.move_options = [1, -2, 2 , -3 , 3]
-        elif int == -1:
+        elif previous_move == -1:
             self.move_options = [-1, -2, 2, -3, 3]
-        elif int == 2:
+        elif previous_move == 2:
             self.move_options = [-1, 1, 2, -3, 3]
-        elif int == -2:
+        elif previous_move == -2:
             self.move_options = [-1, 1, -2, -3, 3]
-        elif int == 3:
+        elif previous_move == 3:
             self.move_options = [-1, 1, -2, 2, 3]
-        elif int == -3:
+        elif previous_move == -3:
             self.move_options = [-1, 1, -2, 2, -3]
 
         move = random.choice(self.move_options)
+
         return move
 
     def amino_acid(self):
+        '''
+        MOVE TO ALGORTIHM CLASS
+        '''
+
         for index, letter in enumerate(self.string):
             amino = AminoAcid(index)
 
@@ -47,12 +56,15 @@ class Protein():
 
             self.amino_dict[index] = [letter, self.x, self.y, self.z]
             self.used_options.append((self.x, self.y, self.z))
+
+        return self.amino_dict
         
 
-    def get_coordinates(self):
-        return self.amino_dict
-
     def check_move(self):
+        '''
+        Checks if it's possible to place next amino-acid at coordinates
+        Returns tuple of coordinates 
+        '''
         x = self.x
         y = self.y
         z = self.z
@@ -87,24 +99,5 @@ class Protein():
         self.x = x
         self.y = y
         self.z = z
+
         return (self.x, self.y, self.z)
-
-
-class AminoAcid():
-    def __init__(self, amino):
-        self.type = amino
-        self.x = 0
-        self.y = 0
-        self.z = 0
-
-    def amino_type(self):
-        for i in self.type:
-            return i
-
-
-class Algorithm():
-
-    def __init__(self, proteine_string):
-        self.string = proteine_string
-        self.directions = []
-
