@@ -7,12 +7,12 @@ class Amino():
         self.z = None
         self.type = amino_type
 
-    def set_cords(self, x, y, z):
+    def set_coords(self, x, y, z):
         self.x = x
         self.y = y
         self.z = z
 
-    def show_cords(self):
+    def show_coords(self):
         return self.x, self.y, self.z
 
     def show_id(self):

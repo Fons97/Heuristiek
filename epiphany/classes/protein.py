@@ -6,6 +6,7 @@ class Protein():
         self.string = string
         self.amino_list = self.create_amino_list(string)
 
+
     def create_amino_list(self, string):
 
         amino_list = []
@@ -15,43 +16,45 @@ class Protein():
 
         return amino_list
 
+
     def view_protein_string(self):
         return self.string
+
 
     def view_protein(self):
         protein_view = []
         for amino in self.amino_list:
-            x, y, z = amino.show_cords()
+            x, y, z = amino.show_coords()
             id = amino.show_id()
             amino_type = amino.show_type()
             protein_view.append((id, x, y, z, amino_type))
 
         return protein_view
 
-    def assign_cordinates(self, amino_list):
+
+    def assign_coordinates(self, amino_list):
         for amino in amino_list:
             id, x, y, z = amino
-            self.amino_list[id].set_cords(x, y, z)
+            self.amino_list[id].set_coords(x, y, z)
+
 
     def score(self):
         full_list = self.view_protein()
-        print(full_list)
         special_list = []
         for amino in full_list:
             if amino[4] != "P":
                 special_list.append(amino)
 
-
         total_score = 0
 
         counting_variable = 0
-        for amino_cords in special_list:
-            amino_id, amino_x, amino_y, amino_z, amino_type  = amino_cords
+        for amino_coords in special_list:
+            amino_id, amino_x, amino_y, amino_z, amino_type  = amino_coords
 
             counting_variable += 1
 
-            for compare_cords in special_list[counting_variable:]:
-                compare_id, compare_x, compare_y, compare_z, compare_type = compare_cords
+            for compare_coords in special_list[counting_variable:]:
+                compare_id, compare_x, compare_y, compare_z, compare_type = compare_coords
 
                 if amino_id - compare_id <= 1 and amino_id - compare_id >= -1:
                     continue
@@ -78,11 +81,11 @@ class Protein():
         for id, amino in enumerate(self.amino_list):
             if id == len(self.amino_list) - 1:
                 break
-            I_x, I_y, I_z = amino.show_cords()
-            II_x, II_y, II_z = self.amino_list[id + 1].show_cords()
+            I_x, I_y, I_z = amino.show_coords()
+            II_x, II_y, II_z = self.amino_list[id + 1].show_coords()
 
             if II_x - I_x != 0:
-                direction = II_x - I_x 
+                direction = II_x - I_x
             elif II_y - I_y != 0:
                 direction = (II_y - I_y) * 2
             elif II_z - I_z != 0:
@@ -91,10 +94,11 @@ class Protein():
             step_order_list.append(direction)
         return step_order_list
 
-    def filled_cordinates(self):
-        filled_cordinates_list = []
+
+    def filled_coordinates(self):
+        filled_coordinates_list = []
         for amino in self.amino_list:
-            x, y, z = amino.show_cords()
+            x, y, z = amino.show_coords()
             if x is not None:
-                filled_cordinates_list.append((x, y ,z))
-        return filled_cordinates_list
+                filled_coordinates_list.append((x, y ,z))
+        return filled_coordinates_list
