@@ -5,15 +5,11 @@ from plotters import plot_3d
 import csv
 
 
-string = load_protein("proteins.txt", '3')
+string = load_protein("proteins.txt", '1')
 eggwhite = Protein(string)
 randomize(eggwhite)
 print(eggwhite.score())
 plot_3d(eggwhite, "mand")
-##########
-
-
-##########
 
 
 '''
@@ -47,4 +43,4 @@ with open('output.csv', 'w') as f:
         writer.writerow([aminos[i], folds[i]])
 
     # Write score to file
-    writer.writerow(['score', score])
+    writer.writerow(['score', score]) 
