@@ -1,13 +1,13 @@
 from loader import load_protein
 from classes.protein import Protein
-from algorithms.randomize import randomize
+from algorithms.randomize import randomize, spiral
 from plotters import plot_3d
 import csv
 
 
-string = load_protein("proteins.txt", '1')
+string = load_protein("proteins.txt", '9')
 eggwhite = Protein(string)
-randomize(eggwhite)
+spiral(eggwhite)
 print(eggwhite.score())
 plot_3d(eggwhite, "mand")
 
@@ -43,4 +43,4 @@ with open('output.csv', 'w') as f:
         writer.writerow([aminos[i], folds[i]])
 
     # Write score to file
-    writer.writerow(['score', score]) 
+    writer.writerow(['score', score])
