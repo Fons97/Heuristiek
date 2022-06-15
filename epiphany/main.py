@@ -7,7 +7,8 @@ import csv
 
 string = load_protein("proteins.txt", '9')
 eggwhite = Protein(string)
-spiral(eggwhite)
+randomize(eggwhite)
+# spiral(eggwhite)
 print(eggwhite.score())
 plot_3d(eggwhite, "mand")
 

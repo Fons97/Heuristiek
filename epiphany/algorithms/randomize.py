@@ -48,6 +48,8 @@ def randomize(protein_obj):
                 z = z + 1
                 protein_obj.assign_coordinates([[id + 1, x, y, z]])
                 break
+                
+        print(protein_obj.reward())
 
 def spiral(protein_obj):
     moves = [-2, 1, 2, 2, -1, -1, -2, -2, -2, 1, 1, 1, 2, 2, 2, 2, -1, -1, -1, -1, -2, -2, -2, -2, -2, 1, 1, 1, 1, 1,

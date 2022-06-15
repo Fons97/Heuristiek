@@ -38,6 +38,53 @@ class Protein():
             self.amino_list[id].set_coords(x, y, z)
 
 
+    def reward(self):
+        protein = self.view_protein()
+        current_state = []
+        point_list = []
+       
+        for amino in protein:
+            if amino[1] != None:
+                current_state.append(amino)
+        
+       
+        for amino in current_state:
+            if amino[4] != "P":
+                    point_list.append(amino)
+        
+
+        current_score = 0
+    
+        
+        counting_variable = 0
+        for amino_coords in point_list:
+            amino_id, amino_x, amino_y, amino_z, amino_type  = amino_coords
+
+            counting_variable += 1
+
+            for compare_coords in point_list[counting_variable:]:
+                compare_id, compare_x, compare_y, compare_z, compare_type = compare_coords
+
+                if amino_id - compare_id <= 1 and amino_id - compare_id >= -1:
+                    continue
+
+                temp_x = amino_x - compare_x
+                temp_y = amino_y - compare_y
+                temp_z = amino_z - compare_z
+                temp = (temp_x, temp_y, temp_z)
+
+                if (temp == (1,0,0) or temp == (-1,0,0) or temp == (0,1,0) or temp == (0,-1,0) or temp == (0,0,1) or temp == (0,0,-1)):
+                    if amino_type == compare_type:
+                        if amino_type == "H":
+                            current_score -= 1
+                        elif amino_type == "C":
+                            current_score -= 5
+                    elif (amino_type == "H" and compare_type == "C") or (amino_type == "C" and compare_type == "H"):
+                        current_score -=1
+
+        return current_score
+        
+
     def score(self):
         full_list = self.view_protein()
         special_list = []
