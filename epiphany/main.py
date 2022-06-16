@@ -5,12 +5,41 @@ from plotters import plot_3d
 import csv
 
 
-string = load_protein("proteins.txt", '9')
+string = load_protein("proteins.txt", '1')
 eggwhite = Protein(string)
-randomize(eggwhite)
+
+# dir = {-1: 0, 1: 0, -2: 0, 2: 0, -3: 0, 3: 0}
+# tot_score = 0
+
+# for i in range(100001):
+#     randomize(eggwhite)
+#     folds = eggwhite.step_order()
+#     folds.append(0)
+#     print(i, "i")
+#     for fold in folds:
+#         if fold == -1:
+#             dir[-1] += 1
+#         elif fold == 1:
+#             dir[1] += 1
+#         elif fold == -2:
+#             dir[-2] += 1
+#         elif fold == 2:
+#             dir[2] += 1
+#         elif fold == -3:
+#             dir[-3] += 1
+#         elif fold == 3:
+#             dir[3] += 1
+#     score = eggwhite.score()
+#     tot_score = tot_score + score
+        
+        
+
 # spiral(eggwhite)
 print(eggwhite.score())
 plot_3d(eggwhite, "mand")
+
+print(dir)
+print(tot_score/100000)
 
 
 '''
