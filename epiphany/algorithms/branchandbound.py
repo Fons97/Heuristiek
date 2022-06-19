@@ -4,9 +4,11 @@
     on the grid.
 
 - Branch And Bound Algorithm for the Protein Folding Problem in the HP Lattice Model
-- Uses breadth first search, but limits the number of branches by
+- Uses breadth first search and reduces the number of branches by
     limiting the probability that a partial conformation will survive if it doesn't
     provide the best score within the partial conformations of the same length
+- After all possible and accepted partial conformations are tried, the program returns
+    the placement that has generated the best (lowest) score
 - Inspired by: https://www.brown.edu/Research/Istrail_Lab/_proFolding/papers/2005/bran-06.pdf
 '''
 
@@ -37,8 +39,8 @@ class BranchAndBound():
 
     def run(self):
         """
-        Runs the branch and bound algorithm until there are no more solutions to be generated
-        Return the solution with the best score
+        Runs the branch and bound algorithm until there are no more placements to be generated
+        Return the placement with the best score
         """
 
         # Different direction options for 2D and 3D solution
@@ -196,59 +198,62 @@ class BranchAndBound():
     def prune(self, partial_protein, amino_node, score, index):
         '''
         Decides whether a partial conformation is kept or pruned, based on:
-        - Amino type: all possible conformations of type 'P' (none points) are kept
-        -
+        - Amino type: all possible conformations of type 'P' are kept, 'C' and 'H' are trimmed
+        - Score: if a current partial conformation's score is lower than the best score
+            of partial conformations of the same length, it has a lower chance of being kept. If the score
+            is below the average score of parrtial conformations of the same length, that chance is
+            even lower. (That's the way the pruning is supposed to be most efficient anyway, but the
+            probabilities can be adjusted.)
+        ! The lower the score, the better. Keep this in mind while reading the if-statements below.
+
         '''
 
+        # Filter amino nodes that could generate points
         if amino_node[4] == 'H' or amino_node[4] == 'C':
 
-            # Current score is lower (aka better) than best score, aka new best score
+            # Current score is lower than best score of same length, new best score, 100% being kept
             if score <= self.best_scores[index]:
 
-                # Update scores
+                # Update (overall) scores
                 self.update_score(partial_protein, score, index)
 
-                # Update overall best score
+                # Update best score of partial conformations of same length
                 self.best_scores[index] = score
 
-                # Add partial conformation to queue
+                # Add partial conformation to queue to build further upon
                 child = copy.deepcopy(partial_protein)
                 self.main_queue.put(child)
 
-            # Current score is higher (aka worse) than average score, benefit is below average
+            # Current score is higher than average score, so less chance of being kept
             elif score >= self.average_scores[index]:
 
+                # Generate a random number between 0 and 1
                 r = random.random()
 
-                # Prune with probability p1
+                # If random number is higher than self.p1, the partial conformation is kept
                 if r > self.p1:
 
-                    # Update scores
                     self.update_score(partial_protein, score, index)
 
-                    # Add partial_conformation to main queue / pc
                     child = copy.deepcopy(partial_protein)
                     self.main_queue.put(child)
 
-            # Current score is somewhere between best_score and average_score
+            # If current score is inbetween best_score and average_score, chance of being kept is slightly higher
             elif score > self.best_scores[index] and self.average_scores[index] > score:
 
                 r = random.random()
 
-                # Prune with probability p2
                 if r > self.p2:
 
-                    # Update scores
                     self.update_score(partial_protein, score, index)
 
-                    # Add partial_conformation to main queue / pc
                     child = copy.deepcopy(partial_protein)
                     self.main_queue.put(child)
+
+        # Keep all partial conformaions if the current amino node is 'P'
         else:
 
-            # Update scores
             self.update_score(partial_protein, score, index)
 
-            # Add partial conformation to queue
             child = copy.deepcopy(partial_protein)
             self.main_queue.put(child)
