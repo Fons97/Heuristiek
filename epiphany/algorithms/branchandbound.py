@@ -166,7 +166,7 @@ class BranchAndBound():
         Returns score of partial conformation
         '''
 
-        score = protein_obj.reward()
+        score = protein_obj.current_score()
         return score
 
     def update_score(self, protein_obj, score, index):

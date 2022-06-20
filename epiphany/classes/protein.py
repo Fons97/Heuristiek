@@ -38,7 +38,7 @@ class Protein():
             self.amino_list[id].set_coords(x, y, z)
 
 
-    def reward(self):
+    def current_score(self):
         protein = self.view_protein()
         current_state = []
         point_list = []
@@ -149,3 +149,94 @@ class Protein():
             if x is not None:
                 filled_coordinates_list.append((x, y ,z))
         return filled_coordinates_list
+
+
+    def valid_move(self, move, x, y, z, protein_obj):
+        valid = False
+        if move == -1 and (x - 1, y, z) not in protein_obj.filled_coordinates():
+            valid = True 
+
+        elif move == 1 and (x + 1, y, z) not in protein_obj.filled_coordinates():
+            valid = True
+
+        elif move == -2 and (x, y - 1, z) not in protein_obj.filled_coordinates():
+            valid = True
+
+        elif move == 2 and (x, y + 1, z) not in protein_obj.filled_coordinates():
+            valid = True
+
+        elif move == -3 and (x, y, z - 1) not in protein_obj.filled_coordinates():
+            valid = True
+
+        elif move == 3 and (x, y, z + 1) not in protein_obj.filled_coordinates():
+            valid = True
+        
+        return valid
+
+    def best_move(self, id, x, y, z, protein_obj, direction_list):
+
+        best_score = protein_obj.current_score()
+        best_move = 0
+        for move in direction_list:
+
+            if move == -1:
+                x = x -1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = -1
+                x = x + 1
+                protein_obj.assign_coordinates([[id, x, y, z]]) 
+
+            elif move == 1:
+                x = x +1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = 1
+                x = x - 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+
+            elif move == -2:
+                y = y -1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = -2
+                y = y + 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+
+            elif move == 2:
+                y = y + 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = 2
+                y = y - 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+
+            elif move == -3:
+                z = z -1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = -3
+                z = z + 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+
+            elif move == 3:
+                z = z + 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+                temp_score = protein_obj.current_score()
+                if temp_score > best_score:
+                    best_score = temp_score
+                    best_move = 3
+                z = z - 1
+                protein_obj.assign_coordinates([[id, x, y, z]])
+
+        return best_move

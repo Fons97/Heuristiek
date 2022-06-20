@@ -1,6 +1,11 @@
 from loader import load_protein
 from classes.protein import Protein
-from algorithms.randomize import randomize, spiral
+# from algorithms.randomize import randomize, spiral, zigzag, stair_fold, two_fold
+# from algorithms.folding import folding_sequences, folding_singles
+# from algorithms.greedy import greed
+# from algorithms.depth_first import DepthFirst
+from algorithms.branchandbound import BranchAndBound
+# from algorithms.breadthfirst import BreadthFirst
 from plotters import plot_3d
 import csv
 
@@ -8,55 +13,25 @@ import csv
 string = load_protein("proteins.txt", '1')
 eggwhite = Protein(string)
 
-# dir = {-1: 0, 1: 0, -2: 0, 2: 0, -3: 0, 3: 0}
-# tot_score = 0
+# algorithm = DepthFirst(eggwhite, 2)
+# algorithm = BreadthFirst(eggwhite, 2)
+algorithm = BranchAndBound(eggwhite, 2)
 
-# for i in range(100001):
-#     randomize(eggwhite)
-#     folds = eggwhite.step_order()
-#     folds.append(0)
-#     print(i, "i")
-#     for fold in folds:
-#         if fold == -1:
-#             dir[-1] += 1
-#         elif fold == 1:
-#             dir[1] += 1
-#         elif fold == -2:
-#             dir[-2] += 1
-#         elif fold == 2:
-#             dir[2] += 1
-#         elif fold == -3:
-#             dir[-3] += 1
-#         elif fold == 3:
-#             dir[3] += 1
-#     score = eggwhite.score()
-#     tot_score = tot_score + score
-        
-        
+protein_solution = algorithm.run()
 
-# spiral(eggwhite)
-print(eggwhite.score())
-plot_3d(eggwhite, "mand")
+print("Score:", algorithm.score())
 
-print(dir)
-print(tot_score/100000)
+# plot_3d(protein_solution, "mand")
 
-
-'''
-Generate file 'output.csv' containing amino-types, move and total score
-'''
-
-# Store folds in list, append 0 to list because no folding is needed at end of string
-folds = eggwhite.step_order()
+folds = protein_solution.step_order()
 folds.append(0)
 
 # Store amino-acid types in list
 aminos = []
-for i in string:
-    aminos.append(i)
+for amino in string:
+    aminos.append(amino)
 
-# Store score in variable
-score = eggwhite.score()
+score = protein_solution.score()
 
 # Open csv file in write mode
 with open('output.csv', 'w') as f:
