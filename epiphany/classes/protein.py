@@ -1,4 +1,6 @@
+from numpy import savez_compressed
 from classes.amino import Amino
+import random
 
 class Protein():
 
@@ -122,6 +124,18 @@ class Protein():
 
         return total_score
 
+    def relaxed(self):
+
+        filled_list = self.filled_coordinates()
+
+        duplicates = list(set([ele for ele in filled_list if filled_list.count(ele) > 1]))
+
+        score = self.score()
+
+        score += len(duplicates) * 10
+
+        return score
+
 
     def step_order(self):
         step_order_list = []
@@ -240,3 +254,153 @@ class Protein():
                 protein_obj.assign_coordinates([[id, x, y, z]])
 
         return best_move
+
+    def do_move(self, move, id, x, y, z, new_protein):
+        """
+        This function does a given move and assumes it to be valid.
+        It uses the id of the aminoacid that you want to give a move to.
+        It also uses the x, y and z coordinates of the amino acid before the one you want to fold (id - 1).
+        """
+
+        if move == -1:
+                x = x -1
+                new_protein.assign_coordinates([[id, x, y, z]])
+
+        elif move == 1:
+            x = x +1
+            new_protein.assign_coordinates([[id, x, y, z]])
+
+        elif move == -2:
+            y = y -1
+            new_protein.assign_coordinates([[id, x, y, z]])
+
+        elif move == 2:
+            y = y + 1
+            new_protein.assign_coordinates([[id, x, y, z]])
+
+        elif move == -3:
+            z = z -1
+            new_protein.assign_coordinates([[id, x, y, z]])
+
+        elif move == 3:
+            z = z + 1
+            new_protein.assign_coordinates([[id, x, y, z]])
+
+    def fold_amino_ran(self, new_protein):
+        """
+        1. get random amino
+        2. look for best past 
+        3. adjust all amino's after that accordingly
+
+        """
+        new_protein_det = new_protein.view_protein()
+        length = len(new_protein.view_protein())
+        chosen_one = random.randint(1, length-1)
+        direction_list = [1, -1, 2, -2 , 3, -3]
+
+        for amino in new_protein_det:
+            if amino[0] == chosen_one:
+                last_amino = new_protein_det[chosen_one - 1]
+                rest_aminos = new_protein_det[chosen_one + 1:]
+                while True:
+                    move = random.choice(direction_list)
+                    amino_id = amino[0]
+                    last_x = last_amino[1]
+                    last_y = last_amino[2]
+                    last_z = last_amino[3]
+                    if new_protein.valid_move(move, last_x, last_y, last_z, new_protein) == True:
+                        new_protein.do_move(move, amino_id, last_x, last_y, last_z, new_protein)
+                        break
+
+                new_protein_det = new_protein.view_protein()
+                
+                if chosen_one + 1 <= length - 1:
+                    for amino in rest_aminos:
+
+                        while True:
+                            move = random.choice(direction_list)
+                            amino_id = amino[0]
+                            last_amino = new_protein_det[amino_id - 1]
+                            last_x = last_amino[1]
+                            last_y = last_amino[2]
+                            last_z = last_amino[3]
+                            if new_protein.valid_move(move, last_x, last_y, last_z, new_protein) == True:
+                                new_protein.do_move(move, amino_id, last_x, last_y, last_z, new_protein)
+                                new_protein_det = new_protein.view_protein()
+                                break
+    
+
+    def rotational_pull_fuck(self, anchor, swing, pull_move):
+        """
+        Pull move 0-3
+        0 1 horizantal
+        2 3 vertical
+        """
+        amino_list = self.view_protein()
+
+        anchor = amino_list[anchor]
+        swing = list(amino_list[swing])
+
+        options = []
+
+        for i in range(1,4):
+            distance = swing[i] - anchor[i]
+            if distance != 1 and distance != -1:
+                options.append(i)
+                options.append(i * -1)
+            else:
+                follow_axis_1 = i
+                saved_pos = swing[follow_axis_1]
+                swing[i] = anchor[i]
+
+        pull_move = options[pull_move]
+
+        if pull_move > 0:
+            swing[pull_move] += 1
+            follow_axis_2 = pull_move
+        else:
+            swing[pull_move * -1] -= 1
+            follow_axis_2 = pull_move * -1
+
+        direction = swing[0] - anchor[0]
+        after_swing = swing[0] + direction
+
+        same_axis = None
+
+        for i in range(1,4):
+            if follow_axis_1 != i and follow_axis_2 != i:
+                same_axis = i
+
+        coords_list = [[swing[0], swing[1], swing[2], swing[3]]]
+
+        if after_swing >= 0 and after_swing < len(amino_list):
+            pass
+        else:
+            return
+
+        if amino_list[after_swing][follow_axis_1] == saved_pos and amino_list[after_swing][follow_axis_2] == swing[follow_axis_2]:
+            return
+        else:
+            template = [after_swing, None, None, None]
+            template[follow_axis_2] = swing[follow_axis_2]
+            template[follow_axis_1] = saved_pos
+            template[same_axis] = amino_list[swing[0]][same_axis]
+
+            coords_list.append(template)
+
+        if direction > 0 and after_swing + 1 < len(amino_list):
+
+            for i in range(after_swing + 1, after_swing + len(amino_list[after_swing:])):
+                amino = [i, amino_list[i-2][1], amino_list[i-2][2], amino_list[i-2][3]]
+                coords_list.append(amino)
+
+        if direction < 0 and after_swing - 1 >= 0:
+            for i in range(len(amino_list[:after_swing])):
+                amino = [i, amino_list[i+2][1], amino_list[i+2][2], amino_list[i+2][3]]
+                coords_list.append(amino)
+
+        self.assign_coordinates(coords_list)
+
+
+
+
