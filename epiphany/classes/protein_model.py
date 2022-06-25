@@ -1,4 +1,4 @@
-import copy 
+import copy
 
 from algorithms.randomize import randomize
 
@@ -7,19 +7,19 @@ class Model:
     def __init__(self, string):
         self.string = string
         self.protein = {}
+        self.special_list = []
+        self.length = len(self.string)
         self.make_protein_dict()
-        self.length = len(self.protein)
-        # special_list = []
-        # self.make_special_list()
-        
+        self.make_special_list()
+
+
 
     def make_protein_dict(self):
         '''
         Creates the data structure for alterations on protein
         '''
-
         for index, amino_type in enumerate(self.string):
-            
+
             self.protein[index] = (amino_type, None, None, None)
 
         self.protein[0] = (self.string[0], 0, 0, 0)
@@ -29,56 +29,34 @@ class Model:
 
     def make_special_list(self):
         '''
-        Creates a list of the 'H' and 'C' type amino acids that can generate points 
+        Creates a list of the 'H' and 'C' type amino acids that can generate score points
         '''
         special_list = []
-        for amino in self.protein.values():
+        for index, amino_type in self.protein.items():
 
-            if amino[0] != "P" and amino[1] != None:
+            if amino_type != "P":
 
-                special_list.append(amino)
+                self.special_list.append(index)
 
-        return special_list
 
-    def make_special_dict(self):
-        '''
-        Creates a list of the 'H' and 'C' type amino acids that can generate points 
-        '''
-        special_dict = {}
-
-        for key, amino in self.protein.items():
-
-            if amino[0] != "P" and amino[1] != None:
-
-                special_dict[key] = amino
-
-        return special_dict
-        
-        
     def score(self):
         '''
-        Calculates the score of current placement of amino acids 
+        Calculates the score of current placement of amino acids
         '''
-        
         score = 0
 
-        special_dict = self.make_special_dict()
-    
         counter = 0
 
-        for amino_id, amino_coords in special_dict.items():
-            # print(amino_id, "amino_id")
+        for amino_id in self.special_list:
+            amino_type, amino_x, amino_y, amino_z  = self.protein[amino_id]
+            counter += 1
 
-            amino_type, amino_x, amino_y, amino_z  = amino_coords
+            for compare_id in self.special_list[counter:]:
 
-            for compare_id in range(amino_id + 1, len(special_dict.keys())):
+                compare_type, compare_x, compare_y, compare_z = self.protein[compare_id]
 
                 if amino_id - compare_id <= 1 and amino_id - compare_id >= -1:
                     continue
-                
-                # print(compare_id, "J")
-                compare_type, compare_x, compare_y, compare_z = self.protein[compare_id]
-
 
                 temp_x = amino_x - compare_x
                 temp_y = amino_y - compare_y
@@ -93,14 +71,14 @@ class Model:
                             score -= 5
                     elif (amino_type == "H" and compare_type == "C") or (amino_type == "C" and compare_type == "H"):
                         score -=1
-        print(score, "score, score")
+
         return score
+
 
     def relaxed(self):
         '''
-        Adds points if amino acids are placed on the same place on grid 
+        Adds points if amino acids are placed on the same place on grid
         '''
-
         filled_list = self.filled_coordinates()
 
         duplicates = list(set([ele for ele in filled_list if filled_list.count(ele) > 1]))
@@ -110,6 +88,50 @@ class Model:
         score += len(duplicates) * 10
 
         return score
+
+    def current_score(self):
+
+        current_state = []
+        point_list = []
+
+        for key in self.protein:
+            if self.protein[key][1] != None:
+                aminos = [key, self.protein[key][0], self.protein[key][1], self.protein[key][2], self.protein[key][3]]
+                current_state.append(aminos)
+
+        for amino in current_state:
+            if amino[1] != "P":
+                    point_list.append(amino)
+
+        current_score = 0
+        counting_variable = 0
+
+        for amino_coords in point_list:
+            amino_id, amino_type, amino_x, amino_y, amino_z  = amino_coords
+
+            counting_variable += 1
+
+            for compare_coords in point_list[counting_variable:]:
+                compare_id, compare_type, compare_x, compare_y, compare_z = compare_coords
+
+                if amino_id - compare_id <= 1 and amino_id - compare_id >= -1:
+                    continue
+
+                temp_x = amino_x - compare_x
+                temp_y = amino_y - compare_y
+                temp_z = amino_z - compare_z
+                temp = (temp_x, temp_y, temp_z)
+
+                if (temp == (1,0,0) or temp == (-1,0,0) or temp == (0,1,0) or temp == (0,-1,0) or temp == (0,0,1) or temp == (0,0,-1)):
+                    if amino_type == compare_type:
+                        if amino_type == "H":
+                            current_score -= 1
+                        elif amino_type == "C":
+                            current_score -= 5
+                    elif (amino_type == "H" and compare_type == "C") or (amino_type == "C" and compare_type == "H"):
+                        current_score -=1
+
+        return current_score
 
     def filled_coordinates(self):
         '''
@@ -143,13 +165,13 @@ class Model:
                 direction = (II_z - I_z) * 3
 
             step_order_list.append(direction)
+
         return step_order_list
 
     def assign_coordinates(self, amino_list):
         '''
-        Assigns coordinates to amino acids 
+        Assigns coordinates to amino acids
         '''
-
         for amino in amino_list:
             self.protein[amino[0]] = (self.string[amino[0]], amino[1], amino[2], amino[3])
 
@@ -159,16 +181,15 @@ class Model:
         0 1 horizantal
         2 3 vertical
         """
-
         amino_list = []
 
-        for amino in self.protein.values():
-            amino_list.append([amino[0], amino[1], amino[2], amino[3]])
+        for index ,amino in self.protein.items():
+            amino_list.append([index, amino[1], amino[2], amino[3]])
 
-        
+
         anchor = amino_list[anchor_nr]
         swing = amino_list[swing_nr]
-     
+
 
         options = []
 
@@ -230,6 +251,7 @@ class Model:
 
         self.assign_coordinates(coords_list)
 
+
     def copy(self):
         """
         Copies a model from itself
@@ -238,12 +260,3 @@ class Model:
         new_model.protein = copy.copy(self.protein)
 
         return new_model
-
-
-
-
-
-
-    
-    
-    

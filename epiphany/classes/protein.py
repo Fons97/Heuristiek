@@ -6,7 +6,7 @@ class Protein():
 
     def __init__(self, string):
         self.string = string
-        self.amino_list = self.create_amino_list(string)
+        # self.amino_list = self.create_amino_list(string)
 
     def get_string(self):
         return self.string
@@ -20,20 +20,17 @@ class Protein():
         protein = self.view_protein()
         current_state = []
         point_list = []
-       
+
         for amino in protein:
             if amino[1] != None:
                 current_state.append(amino)
-        
-       
+
         for amino in current_state:
             if amino[4] != "P":
                     point_list.append(amino)
-        
 
         current_score = 0
-    
-        
+
         counting_variable = 0
         for amino_coords in point_list:
             amino_id, amino_x, amino_y, amino_z, amino_type  = amino_coords
@@ -61,7 +58,7 @@ class Protein():
                         current_score -=1
 
         return current_score
-        
+
 
     def score(self):
         full_list = self.view_protein()
@@ -202,7 +199,4 @@ class Protein():
                 coords_list.append(amino)
 
         self.assign_coordinates(coords_list)
-
-
-
-
+    #

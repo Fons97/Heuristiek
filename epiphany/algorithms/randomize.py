@@ -4,7 +4,6 @@ import math
 from classes.protein import Protein
 
 
-
 def randomize(model):
     '''
     RANDOMIZE EXPLANATION
@@ -15,12 +14,11 @@ def randomize(model):
     list = [1, -1, 2, -2 , 3, -3]
 
     for id in range(model.length):
-        
+
         if id == model.length - 1:
             break
 
         garbage, x, y, z = model.protein[id]
-   
 
         while True:
             move = random.choice(list)
@@ -56,4 +54,3 @@ def randomize(model):
                 break
 
     return model
-            

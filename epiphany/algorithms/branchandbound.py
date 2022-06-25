@@ -21,9 +21,7 @@ from classes.amino import Amino
 class BranchAndBound:
 
     def __init__(self, model, dimension):
-
         self.main_queue = queue.Queue()
-        self.queue = []
         self.model = model.copy()
         self.dimension = dimension
         self.best_placement = None
@@ -31,8 +29,9 @@ class BranchAndBound:
         self.best_scores = defaultdict(int)
         self.all_scores = defaultdict(list)
         self.average_scores = defaultdict(int)
-        self.p1 = 0.9
+        self.p1 = 1
         self.p2 = 0.8
+        self.nr_of_states = 0
 
     def run(self):
         """
@@ -47,43 +46,31 @@ class BranchAndBound:
             directions = [1, -1, 2, -2 ,3, -3]
 
         # Create protein to build new states with
-        # first_protein = copy.deepcopy(self.model)
-        first_protein = self.model
+        first_protein = self.model.copy()
 
-        # Place first and second amino of protein on grid, to eliminate protein rotation
-        first_protein.assign_coordinates([[0, 0, 0, 0]])
+        # Place second amino of protein on grid, to eliminate protein rotation
         first_protein.assign_coordinates([[1, 1, 0, 0]])
 
         # Put starting state in queue
-        # self.main_queue.put(first_protein)
-        self.queue.append(first_protein)
-        print(self.queue)
+        self.main_queue.put(first_protein)
+
         # Keep excecuting algorithm until all possible desired solutions have been evaluated
-        # while not self.main_queue.empty():
-        while self.queue != []:
+        while not self.main_queue.empty():
 
             # Get next state to evaluate
-            # protein = self.main_queue.get()
-            protein = self.queue.pop(0)
-            print(protein.protein.values(), "protein")
+            partial_protein = self.main_queue.get()
 
             # Get the id of current amino
-            index = self.get_index(protein)
-            print(index, "index")
+            index = self.get_index(partial_protein)
 
             # If the last amino in protein is reached, update scores and quit
             if index == "last_amino_node":
-                score = self.get_score(protein)
-                self.update_score(protein, score, index)
+                score = self.get_score(partial_protein)
+                self.update_score(partial_protein, score, index)
                 break
 
             # "Pseudo-place" amino node at each direction
             for direction in directions:
-
-                # Create new protein object for each direction
-                # PROBABLY UNECCASSARY 
-                partial_protein = self.model.copy()
-                print(partial_protein.protein.values(), "values")
 
                 # Get details about current amino node
                 amino_node = partial_protein.protein[index]
@@ -149,8 +136,9 @@ class BranchAndBound:
                     self.prune(partial_protein, amino_node, score, index)
 
         # If all amino nodes have been placed, return the placement with the best score
-        # print(self.best_placement.protein())
-            print(self.main_queue)
+        print("Number of states:", self.nr_of_states)
+        print(self.best_placement.step_order())
+
         return self.best_placement
 
     def get_index(self, model):
@@ -159,10 +147,10 @@ class BranchAndBound:
         If the current node is last node of protein, return last node message
         '''
         last_amino = False
-        print(model.protein)
+        # print(model.protein)
 
         for index, amino in model.protein.items():
-            print(index, "index 2")
+            # print(index, "index 2")
             if amino[1] == None:
                 return index - 1
 
@@ -175,7 +163,8 @@ class BranchAndBound:
         '''
         Returns score of partial conformation
         '''
-        score = model.score()
+
+        score = model.current_score()
         return score
 
     def update_score(self, model, score, index):
@@ -218,10 +207,11 @@ class BranchAndBound:
         '''
 
         # Filter amino nodes that could generate points
-        if amino_node[0] == 'H' or amino_node[0] == 'C':
+        if amino_node[0] == 'H' or amino_node[0] == 'C' or amino_node[0] == 'P':
 
             # Current score is lower than best score of same length, new best score, 100% being kept
             if score <= self.best_scores[index]:
+                print("Amino id:", index, "|", "Nr of states:", self.nr_of_states, "|", "Best score:", self.top_score)
 
                 # Update (overall) scores
                 self.update_score(partial_protein, score, index)
@@ -230,7 +220,8 @@ class BranchAndBound:
                 self.best_scores[index] = score
 
                 # Add partial conformation to queue to build further upon
-                child = self.model.copy()
+                self.nr_of_states = self.nr_of_states + 1
+                child = partial_protein.copy()
                 self.main_queue.put(child)
 
             # Current score is higher than average score, so less chance of being kept
@@ -244,7 +235,8 @@ class BranchAndBound:
 
                     self.update_score(partial_protein, score, index)
 
-                    child = self.model.copy()
+                    self.nr_of_states = self.nr_of_states + 1
+                    child = partial_protein.copy()
                     self.main_queue.put(child)
 
             # If current score is inbetween best_score and average_score, chance of being kept is slightly higher
@@ -256,13 +248,15 @@ class BranchAndBound:
 
                     self.update_score(partial_protein, score, index)
 
-                    child = self.model.copy()
+                    self.nr_of_states = self.nr_of_states + 1
+                    child = partial_protein.copy()
                     self.main_queue.put(child)
 
-        # Keep all partial conformaions if the current amino node is 'P'
-        else:
-
-            self.update_score(partial_protein, score, index)
-
-            child = self.model.copy()
-            self.main_queue.put(child)
+        # # Keep all partial conformaions if the current amino node is 'P'
+        # else:
+        #
+        #     self.update_score(partial_protein, score, index)
+        #
+        #     self.nr_of_states = self.nr_of_states + 1
+        #     child = partial_protein.copy()
+        #     self.main_queue.put(child)
