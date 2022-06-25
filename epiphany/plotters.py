@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_3d(protein_obj, filename):
+def plot_3d(model, filename):
 
     # Matplotlib
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
 
-    amino_list = protein_obj.view_protein()
+    # amino_list = model.protein.values()
+    # print(amino_list)
     # create list to be filled with coordinates of special_connections
     special_list = []
 
@@ -15,17 +16,18 @@ def plot_3d(protein_obj, filename):
     y_values = []
     z_values = []
 
-    for amino in amino_list:
+    for key, amino in model.protein.items():
+
         # Plots amino nodes on 3D graph
-        if amino[4] == 'H':
-            special_list.append([amino[0], amino[1], amino[2], amino[3]])
+        if amino[0] == 'H':
+            special_list.append([key, amino[1], amino[2], amino[3]])
             ax.scatter(amino[1], amino[2], amino[3], s=50, c='red', zorder=2)
 
-        elif amino[4] == 'C':
-            special_list.append([amino[0], amino[1], amino[2], amino[3]])
+        elif amino[0] == 'C':
+            special_list.append([key, amino[1], amino[2], amino[3]])
             ax.scatter(amino[1], amino[2], amino[3], s=50, c='green', zorder=2)
 
-        elif amino[4] == 'P':
+        elif amino[0] == 'P':
             ax.scatter(amino[1], amino[2], amino[3], s=50, c='blue', zorder=2)
 
         # Used to plot lines in between amino_nodes

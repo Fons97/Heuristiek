@@ -1,35 +1,37 @@
 from algorithms.randomize import randomize
 from loader import load_protein
 from classes.protein import Protein
-from algorithms.randomize import randomize, spiral, zigzag, stair_fold, two_fold
+from algorithms.randomize import randomize
 # from algorithms.folding import folding_sequences, folding_singles
 # from algorithms.greedy import greed
 # from algorithms.depth_first import DepthFirst
 from algorithms.branchandbound import BranchAndBound
 from algorithms.hillclimber import HillClimber
 # from algorithms.breadthfirst import BreadthFirst
+from classes.protein_model import Model
 from plotters import plot_3d
 import csv
 
 
-string = load_protein("proteins.txt", '9')
-eggwhite = Protein(string)
-# print(eggwhite.view_protein())
+string = load_protein("proteins.txt", '4')
+eggwhite = Model(string)
 
-randomize(eggwhite)
-# print(eggwhite.view_protein())
+# eggyolk = randomize(eggwhite)
 
-# algorithm = DepthFirst(eggwhite, 2)
-# algorithm = BranchAndBound(eggwhite, 3)
-algorithm = HillClimber(eggwhite)
+algorithm = BranchAndBound(eggwhite, 3)
 
-protein_solution = algorithm.run(100000)
+eggshell = algorithm.run()
 
-print("Score:", protein_solution.current_score())
+print("Score:", eggshell.score())
 
-plot_3d(protein_solution, "mand")
+plot_3d(eggshell, "mand")
 
-folds = protein_solution.step_order()
+
+
+
+
+
+folds = eggyolk.step_order()
 folds.append(0)
 
 # Store amino-acid types in list
@@ -37,7 +39,7 @@ aminos = []
 for amino in string:
     aminos.append(amino)
 
-score = protein_solution.score()
+score = eggyolk.score()
 
 # Open csv file in write mode
 with open('output.csv', 'w') as f:

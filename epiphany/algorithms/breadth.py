@@ -9,7 +9,7 @@ import copy
 
 # Monte Caro biopolymer strucure simulation and optimazilation via fragment regrowth monte carlo
 
-class BranchAndBound():
+class BranchAndBound:
 
     def __init__(self, string):
         self.string = string
