@@ -175,7 +175,7 @@ class Model:
         for amino in amino_list:
             self.protein[amino[0]] = (self.string[amino[0]], amino[1], amino[2], amino[3])
 
-    def rotational_pull(self, anchor_nr, swing_nr, pull_move):
+    def rotational_pull_fuck(self, anchor_nr, swing_nr, pull_move):
         """
         Pull move 0-3
         0 1 horizantal
@@ -186,10 +186,8 @@ class Model:
         for index ,amino in self.protein.items():
             amino_list.append([index, amino[1], amino[2], amino[3]])
 
-
         anchor = amino_list[anchor_nr]
-        swing = amino_list[swing_nr]
-
+        swing = copy.copy(amino_list[swing_nr])
 
         options = []
 
@@ -221,7 +219,7 @@ class Model:
             if follow_axis_1 != i and follow_axis_2 != i:
                 same_axis = i
 
-        coords_list = [[swing_nr, swing[1], swing[2], swing[3]]]
+        coords_list = [[swing[0], swing[1], swing[2], swing[3]]]
 
         if after_swing >= 0 and after_swing < len(self.protein):
             pass
