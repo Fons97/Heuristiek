@@ -25,13 +25,13 @@ class HillClimber:
 
         # for direction in directions:
         #     temp_protein = self.model.copy()
-        #     temp_protein.rotational_pull_fuck(chosen_one, chosen_one + 1, direction)
+        #     temp_protein.rotational_pull(chosen_one, chosen_one + 1, direction)
         #     folded_proteins.append(temp_protein)
 
         for move in self.possible_moves:
 
             temp_protein = self.model.copy()
-            temp_protein.rotational_pull_fuck(move[0], move[1], move[2])
+            temp_protein.rotational_pull(move[0], move[1], move[2])
             folded_proteins.append(temp_protein)
 
         return folded_proteins

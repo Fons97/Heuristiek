@@ -129,7 +129,7 @@ class Protein():
         return step_order_list
 
 
-    def rotational_pull_fuck(self, anchor, swing, pull_move):
+    def rotational_pull(self, anchor, swing, pull_move):
         """
         Pull move 0-3
         0 1 horizantal
