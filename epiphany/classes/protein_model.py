@@ -1,4 +1,5 @@
 import copy
+import random
 
 from algorithms.randomize import randomize
 
@@ -175,7 +176,7 @@ class Model:
         for amino in amino_list:
             self.protein[amino[0]] = (self.string[amino[0]], amino[1], amino[2], amino[3])
 
-    def rotational_pull_fuck(self, anchor_nr, swing_nr, pull_move):
+    def rotational_pull(self, anchor_nr, swing_nr, pull_move):
         """
         Pull move 0-3
         0 1 horizantal
@@ -258,3 +259,5 @@ class Model:
         new_model.protein = copy.copy(self.protein)
 
         return new_model
+
+   

@@ -8,7 +8,8 @@ from algorithms.randomize import randomize
 from algorithms.branchandbound import BranchAndBound
 from algorithms.beambreadth import BeamBreadth
 from algorithms.hillclimber import HillClimber
-from algorithms.climber import Climber
+from algorithms.simannealing import SimulatedAnnealing
+# from algorithms.climber import Climber
 # from algorithms.breadthfirst import BreadthFirst
 from classes.protein_model import Model
 from plotters import plot_3d
@@ -54,42 +55,60 @@ import csv
 
 # # CLIMBERMODEL
 # Load protein string
-string = load_protein("proteins.txt", '5')
+
+string = load_protein("proteins.txt", '9')
 # Create Model
 protein_model = Model(string)
-# Select algorithm
-algorithm = Climber(protein_model, 3)
-# Run algorithm
-solution = algorithm.run()
-# Print score
-print("Score:", algorithm.score())
-# Plot solution
-plot_3d(solution, "mand")
+
+for n in range(0, 1):
+    randomize(protein_model)
+    # Select algorithm
+    algorithm = SimulatedAnnealing(protein_model)
+    # Run algorithm
+    solution = algorithm.run(1001)
+    # Print score
+    print("Score:", solution.score())
+    # Plot solution
+    plot_3d(solution, "mand")
 
 
-folds = solution.step_order()
-folds.append(0)
+    folds = solution.step_order()
+    folds.append(0)
 
-# Store amino-acid types in list
-aminos = []
-for amino in string:
-    aminos.append(amino)
+    # Store amino-acid types in list
+    aminos = []
+    for amino in string:
+        aminos.append(amino)
 
-score = algorithm.score()
+    score = solution.score()
 
-# Open csv file in write mode
-with open('output.csv', 'w') as f:
+    if n < 1:
+    # Open csv file in write mode
+        with open('output.csv', 'w') as f:
 
-    # Create csv writer
-    writer = csv.writer(f)
+            # Create csv writer
+            writer = csv.writer(f)
 
-    # Write header to file
-    header = ['amino', 'fold']
-    writer.writerow(header)
+            # Write header to file
+            header = ['amino', 'fold']
+            writer.writerow(header)
 
-    # Write rows with amino name and move to file
-    for i in range(len(string)):
-        writer.writerow([aminos[i], folds[i]])
+            # Write rows with amino name and move to file
+            for i in range(len(string)):
+                writer.writerow([aminos[i], folds[i]])
 
-    # Write score to file
-    writer.writerow(['score', score])
+            # Write score to file
+            writer.writerow(['score', score])
+    
+    else:
+        with open('output.csv', 'a') as f:
+  
+            writer =csv.writer(f)
+        
+            # Pass the list as an argument into
+            # the writerow()
+            writer.writerow(" ")
+            for i in range(len(string)):
+                writer.writerow([aminos[i], folds[i]])
+        
+            writer.writerow(['score', score])
