@@ -2,10 +2,17 @@ import random
 import queue
 import copy
 import math
+from collections import defaultdict
 
 from classes.protein import Protein
 from classes.amino import Amino
 
+# HASHING
+# RUNNING TIME BIJHOUDEN
+#  OM BEPAALDE TIJD EEN WAARDE UITPRINTEN
+# STRING 4 EN GEKKE OUTPUT BIJ STRING 5
+# BEAM SIZE DIFFERENCE 2D 3D
+# MOVING ON AFTER X TIMES NOT HAVING FOUND A BETTER SCORE
 
 class BeamBreadth:
 
@@ -17,7 +24,10 @@ class BeamBreadth:
         self.top_score = 0
         self.best_placement = None
         self.nr_of_states = 0
-        self.beam_size = 100
+        self.beam_size = 4500
+        self.tracker = {}
+        self.counter = 0
+        self.p1 = 0.8
 
         self.set_dimension(dimension)
 
@@ -25,7 +35,7 @@ class BeamBreadth:
         if int == 2:
             self.dimension = [1, -1, 2, -2]
         elif int == 3:
-            self.dimension = [1, -1, 2, -2, -3, 3]
+            self.dimension = [1, -1, 2, -2, 3, -3]
 
         return self.dimension
 
@@ -61,16 +71,33 @@ class BeamBreadth:
         return self.top_score
 
     def beam(self, index, partial_protein, score):
+        # self.counter = self.counter + 1
+        #
+        # self.tracker[index] = self.counter
+        #
+        # if self.tracker[index] > 1000:
+        #     self.counter = 0
+        #     return
 
-        # print("Amino id:", index, "|", "Nr of states:", self.nr_of_states, "|", "Best score:", self.top_score)
-
-        # Keep the beam at 20
+        # Keep the beam at beam_length
         if len(self.scores) > self.beam_size:
 
             # Determine current worst score
             worst_score = max(self.scores)
 
-            if score <= worst_score:
+            if score == worst_score:
+                r = random.random()
+
+                if r > self.p1:
+                    self.scores.remove(max(self.scores))
+                    self.scores.append(score)
+
+                    # Add partial conformation to queue to build further upon
+                    self.nr_of_states = self.nr_of_states + 1
+                    child = partial_protein.copy()
+                    self.queue.put(child)
+
+            elif score < worst_score:
                 self.scores.remove(max(self.scores))
                 self.scores.append(score)
 
@@ -83,25 +110,23 @@ class BeamBreadth:
                     print("Amino id:", index, "|", "Nr of states:", self.nr_of_states, "|", "Best score:", self.top_score)
 
                     # Update current best partial conformation
-                    self.best_placement = partial_protein
+                    self.best_placement = child
                     self.top_score = score
 
         else:
-            # Add partial conformation to queue to build further upon
+            # Add partial conformation to queue to build further upon when beam size is not yet reached
             self.scores.append(score)
             self.nr_of_states = self.nr_of_states + 1
             child = partial_protein.copy()
             self.queue.put(child)
 
-
     def run(self):
-
         directions = self.set_dimension(self.dimension)
 
         # Create protein to build new states with
         protein = self.model.copy()
 
-        # Place first and second amino of protein on grid, to eliminate protein rotation
+        # Place second amino of protein on grid, to eliminate protein rotation
         protein.assign_coordinates([[1, 1, 0, 0]])
 
         # Put starting state in queue
@@ -117,6 +142,8 @@ class BeamBreadth:
 
             # If the last amino in protein is reached, update scores and quit
             if index == "last_amino_node":
+                score = self.get_score(partial_protein)
+                self.beam(index, partial_protein, score)
                 break
 
             # "Pseudo-place" amino node at each direction
@@ -189,5 +216,4 @@ class BeamBreadth:
         print("Number of states:", self.nr_of_states)
         print(self.best_placement.protein, "best placement")
         print(self.best_placement.step_order())
-
         return self.best_placement
