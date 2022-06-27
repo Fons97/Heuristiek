@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
+from classes.protein_model import Model
+import mplcursors
 
 def plot_3d(model, filename):
 
@@ -16,28 +19,50 @@ def plot_3d(model, filename):
     y_values = []
     z_values = []
 
+    # hlabel = ['H', model.protein]
+
     for key, amino in model.protein.items():
 
         # Plots amino nodes on 3D graph
         if amino[0] == 'H':
             special_list.append([key, amino[1], amino[2], amino[3]])
-            ax.scatter(amino[1], amino[2], amino[3], s=50, c='red', zorder=2)
+            ax.scatter(amino[1], amino[2], amino[3], s=50, c='red', zorder=2, label=[key, 'H'])
 
         elif amino[0] == 'C':
             special_list.append([key, amino[1], amino[2], amino[3]])
-            ax.scatter(amino[1], amino[2], amino[3], s=50, c='green', zorder=2)
+            ax.scatter(amino[1], amino[2], amino[3], s=50, c='green', zorder=2, label=[key, 'C'])
 
         elif amino[0] == 'P':
-            ax.scatter(amino[1], amino[2], amino[3], s=50, c='blue', zorder=2)
+            ax.scatter(amino[1], amino[2], amino[3], s=50, c='blue', zorder=2, label=[key, 'P'])
 
         # Used to plot lines in between amino_nodes
         x_values.append(amino[1])
         y_values.append(amino[2])
         z_values.append(amino[3])
 
+
     ax.set_xticks(np.arange(min(x_values)-1, max(x_values)+1, 1.0))
     ax.set_yticks(np.arange(min(y_values)-1, max(y_values)+1, 1.0))
     ax.set_zticks(np.arange(min(z_values)-1, max(z_values)+1, 1.0))
+
+    ax.set_xlabel("X-axis")
+    ax.set_ylabel("Y-axis")
+    ax.set_zlabel("Z-axis")
+
+    mplcursors.cursor(hover=True)
+
+
+    ax.set_title(f'Protein: {model.string}       Score: {model.current_score()}')
+
+    # red_patch = mpatches.Patch(color='red', label='H')
+    # blue_patch = mpatches.Patch(color='blue', label='P')
+    # green_patch = mpatches.Patch(color='green', label='C')
+
+    ax.legend(handles=[mpatches.Patch(color='red', label='H'),
+                       mpatches.Patch(color='blue', label='P'),
+                       mpatches.Patch(color='green', label='C')])
+
+    # ax.legend([])
 
     ax.plot(x_values, y_values, z_values, linestyle="solid",
     linewidth=1.2, c="grey", zorder=1)
