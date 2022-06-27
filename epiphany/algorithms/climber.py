@@ -1,6 +1,7 @@
 import random
 import math
 import copy
+import itertools
 
 from classes.protein import Protein
 from classes.amino import Amino
@@ -10,300 +11,244 @@ from classes.amino import Amino
     # Choose substring
     # Manipulate substring
         # If new_substring score is lower than old_substring score:
-            # Move start_substring to new_substring
-            # Move end_substring to new_substring
+            # save state and perform next mutation on saved state
         # Else:
-            # new_substring = old_substring
+            # keep old state and perform mutation on state
+
+# cashen van die paden??
+# opslaan van eerder gedane berekeningen
+
 
 class Climber():
 
-    def __init__(self, protein_obj):
-        self.protein_obj = protein_obj
-        self.score = 0
+    def __init__(self, model, dimension):
+        self.model = model.copy()
+        self.dimension = 3
+        self.best_score = 0
+        self.best_placement = None
 
     def run(self):
 
-        # Herhaal
-
-        # protein = copy.deepcopy(self.protein_obj)
-
-        # score_list = []
-
-        # for i in range(100):
-        #
-        #     protein = copy.deepcopy(self.protein_obj)
-        #     starting_state = self.randomize(protein)
-        #     new_score = self.get_score(starting_state)
-        #     score_list.append(new_score)
-        #
-        # print(starting_state.view_protein(), "starting_state")
-        # print(score_list, "score+list")
-        # if starting_state == "failed":
-        #     print("yes failed indeed")
-
         # Create starting state
-        protein = copy.deepcopy(self.protein_obj)
+        protein = self.model.copy()
         starting_state = self.randomize(protein)
 
-        for i in range(100):
-            print(i, "i")
+        # Get a starting score
+        self.best_score = self.get_score(starting_state)
+        start_score = self.get_score(starting_state)
 
-            # Get starting/previous score
-            starting_score = copy.deepcopy(self.score)
+        # Set starting_state as best placement
+        self.best_placement = starting_state.copy()
+
+        for i in range(100):
+            print(i, "iteration")
+
+            # Get previous best conformation
+            protein_solution = self.best_placement.copy()
+
+            # If no walks of len are possible because of starting state, generate new starting state (only for testings)
+            if protein_solution == starting_state:
+                protein_solution = self.randomize(protein)
 
             # Get random indexes of substring to manipulate
-            start_amino, end_amino = self.get_substring_index(starting_state)
+            start_amino, end_amino = self.get_substring_index(protein_solution)
 
-            # From indexes generate substring
-            substring = self.get_substring(starting_state, start_amino, end_amino)
+            # Get a list of all possible walks from start point of substring to end point of substring
+            fitting_walks = self.possible_walks(protein_solution, start_amino, end_amino)
 
-            change_protein = self.change_protein(substring, starting_state, start_amino, end_amino)
-            # print(self.protein_obj.view_protein(), "changeprotein")
-
-            if change_protein == "Rejected":
-                self.protein_obj = starting_state
+            # If no possible walks, go to next iterations
+            if len(fitting_walks) == 0:
                 continue
-                # print("rejected")
 
-            else:
-                print(change_protein.view_protein(), "changeprotein")
-                new_score = self.get_score(change_protein)
-                print(new_score, "newscore")
-
-                if new_score < starting_score:
-                    # print("new_score:" , new_score, "starting_score: ", starting_score)
-                    self.protein_obj = change_protein
-                else:
-                    self.protein_obj = starting_state
+            # Creates new protein objects with all possible walks + create new partial conformations
+            self.create_new_walk(fitting_walks, protein_solution, start_amino, end_amino)
 
 
-        print(self.protein_obj.view_protein(), "returned object")
-        return self.protein_obj
-        # return starting_state
+        print(starting_state.protein, "startstate")
+        print(start_score, "starting score")
+        print(self.best_placement.protein, "returned object")
+        return self.best_placement
+
+    def create_new_walk(self, walks, protein_obj, start, end):
+
+        walk = random.choice(walks)
+
+        # for walk in walks:
+        partial_protein = protein_obj.copy()
+
+        for key, coords in enumerate(walk):
+
+            garbage, x, y, z = partial_protein.protein[start - 1 + key]
+
+            partial_protein.assign_coordinates([[start + key, x + coords[0], y + coords[1], z + coords[2]]])
+
+        # Get score of new partial_protein
+        score = self.get_score(partial_protein)
+
+        if score <= self.best_score:
+
+            to_check = partial_protein.copy()
+
+            # Check if new solution is valid and add score etc
+            if self.is_valid(to_check) == True:
+                self.best_score = self.get_score(to_check)
+                self.best_placement = to_check
+
+    def is_valid(self, protein_obj):
+
+        coords_list = protein_obj.filled_coordinates()
+
+        duplicates = list(set([ele for ele in coords_list if coords_list.count(ele) > 1]))
+
+        if len(duplicates) == 0:
+            return True
+
+        return False
+
+    def possible_walks(self, model, begin_index, end_index):
+
+        # Determine length of path to travel
+        path_length = end_index - begin_index + 2
+
+        # Get all possible walks with that length, regardless of self-avoiding
+        all_walks = self.get_walks(path_length)
+
+        # Filter paths (not all of them tho) that aren't self-avoiding
+        # self_avoiding_walks = self.path_avoiding_walks(all_walks)
+
+        # Get coords of amino-acid to start counting from
+        garbage, model_x, model_y, model_z = model.protein[begin_index - 1]
+
+        # Get coords of amino acid to reach with path
+        garbage, model_x_end, model_y_end, model_z_end = model.protein[end_index]
+
+        connecting_walks = []
+
+        for i in all_walks:
+            i.pop(0)
+            begin_x = model_x
+            begin_y = model_y
+            begin_z = model_z
+
+            for j in i:
+                diff_x, diff_y, diff_z = j[0], j[1], j[2]
+                begin_x = begin_x + diff_x
+                begin_y = begin_y + diff_y
+                begin_z = begin_z + diff_z
+
+            if begin_x == model_x_end and begin_y == model_y_end and begin_z == model_z_end:
+                connecting_walks.append(i)
+
+        return connecting_walks
+
+    # def path_avoiding_walks(self, walks):
+    #
+    #     self_avoiding = []
+    #
+    #     for walk in walks:
+    #         walk.pop(0)
+    #
+    #         for coords in range(1, len(walk)):
+    #             if walk[coords] == (-1, 0, 0) and walk[coords - 1] != (1, 0, 0) or walk[coords] == (1, 0, 0) and walk[coords - 1] != (-1, 0, 0) or walk[coords] == (0, -1, 0) and walk[coords - 1] != (0, 1, 0) or walk[coords] == (0, 1, 0) and walk[coords - 1] != (0, -1, 0) or walk[coords] == (0, 0, -1) and walk[coords - 1] != (0, 0, 1) or walk[coords] == (0, 0, 1) and walk[coords - 1] != (0, 0, -1):
+    #                 self_avoiding.append(walk)
+    #
+    #     self_avoiding.sort()
+    #
+    #     no_duplicates = list(self_avoiding for self_avoiding,_ in itertools.groupby(self_avoiding))
+    #
+    #     return no_duplicates
+
+    def get_walks(self, path_length):
+
+        moves = [(-1, 0, 0), (1, 0, 0),
+                 (0, -1, 0), (0, 1, 0),
+                 (0, 0, -1), (0, 0, 1)]
+
+        # Determine all possible walks that have length path_length
+
+        if path_length == 1:
+            return [[0]]
+        else:
+            walks = []
+
+        for k in self.get_walks(path_length-1):
+            for i in moves:
+                walks.append(k+[i])
+
+        return walks
 
     def get_substring_index(self, protein_object):
 
-        return 2, 8 + 1
-        # second choice + 1
-        # string = protein_object.view_protein_string()
-        #
-        # choice1 = random.choice(range(1, len(string)))
-        # choice2 = random.choice(range(1, len(string)))
-        #
-        # if choice1 > choice2:
-        #     return choice2, choice1
-        # elif choice1 < choice2:
-        #     return choice1, choice2
-        # else:
-        #     return choice1, choice2 + 1
+        amino_1 = 1
+        amino_2 = 0
 
-    def get_substring(self, protein_object, start_amino, end_amino):
+        while amino_1 >= amino_2:
+            amino_1 = random.randint(1, 12)
+            amino_2 = random.randint(amino_1, amino_1 + 6)
 
-        substring = protein_object.view_protein()[start_amino:end_amino]
+        print(amino_1, amino_2)
+        return amino_1, amino_2
 
-        return substring
+    def randomize(self, model):
+        '''
+        RANDOMIZE EXPLANATION
+        '''
 
-    def change_protein(self, substring, protein_object, start_amino, end_amino):
+        list = [1, -1, 2, -2 , 3, -3]
 
-        moves = [1, -1, 2, -2]
+        for id in range(model.length):
 
-        start_amino_old = copy.deepcopy(protein_object.view_protein()[start_amino - 1])
-        end_amino_old = copy.deepcopy(protein_object.view_protein()[end_amino - 1])
-
-        # Reset values of amino acids in substring (except first amino acid)
-        for i in substring:
-            protein_object.assign_coordinates([[i[0], None, None, None]])
-
-        substring_new = protein_object.view_protein()[start_amino:end_amino]
-
-        start_string = self.get_start_string(protein_object, start_amino - 1)
-        end_string = self.get_end_string(protein_object, end_amino - 1)
-        # print(start_string, "start_string")
-
-        for amino in substring_new:
-
-            amino_node = protein_object.view_protein()[amino[0] - 1]
-
-            # Get current coordinates from amino acids
-            id = amino_node[0]
-            x = amino_node[1]
-            y = amino_node[2]
-            z = amino_node[3]
-
-            # while True:
-            move = random.choice(moves)
-
-            # Add not in filled coordinates
-            if move == -1:
-                x = x - 1
-                protein_object.assign_coordinates([[id + 1, x, y, z]])
-                continue
-
-            elif move == 1:
-                x = x + 1
-                protein_object.assign_coordinates([[id + 1, x, y, z]])
-                continue
-
-            elif move == -2:
-                y = y - 1
-                protein_object.assign_coordinates([[id + 1, x, y, z]])
-                continue
-
-            elif move == 2:
-                y = y + 1
-                protein_object.assign_coordinates([[id + 1, x, y, z]])
-                continue
-
-
-        start_amino_new = copy.deepcopy(protein_object.view_protein()[start_amino - 1])
-        end_amino_new = copy.deepcopy(protein_object.view_protein()[end_amino - 1])
-
-        #Begin string coord difference
-        diff_x_start = start_amino_new[1] - start_amino_old[1]
-        diff_y_start = start_amino_new[2] - start_amino_old[2]
-        diff_z_start = start_amino_new[3] - start_amino_old[3]
-
-        for amino in start_string:
-
-            amino_node = protein_object.view_protein()[amino[0]]
-
-            id = amino_node[0]
-            new_x = amino_node[1] + diff_x_start
-            new_y = amino_node[2] + diff_y_start
-            new_z = amino_node[3] + diff_z_start
-
-            protein_object.assign_coordinates([[id, new_x, new_y, new_z]])
-
-        # End coords difference
-        diff_x = end_amino_new[1] - end_amino_old[1]
-        diff_y = end_amino_new[2] - end_amino_old[2]
-        diff_z = end_amino_new[3] - end_amino_old[3]
-
-        for amino in end_string:
-
-            amino_node = protein_object.view_protein()[amino[0]]
-
-            id = amino_node[0]
-            new_x = amino_node[1] + diff_x
-            new_y = amino_node[2] + diff_y
-            new_z = amino_node[3] + diff_z
-
-            protein_object.assign_coordinates([[id, new_x, new_y, new_z]])
-
-        list_of_coords = protein_object.filled_coordinates()
-
-        duplicates = list(set([ele for ele in list_of_coords if list_of_coords.count(ele) > 1]))
-
-        print(duplicates, "duplicates")
-        if len(duplicates) > 0:
-            return "Rejected"
-
-
-        # print("All the duplicates from list are : " + str(res))
-        # print("length of duplicates: ", len(res))
-
-        return protein_object
-
-    def get_index(self, protein_obj):
-
-        last_amino = False
-
-        for i in protein_obj.view_protein():
-            if i[1] == None:
-                return i[0] - 1
-
-    def get_start_string(self, protein_object, start_amino):
-
-        start_amino_list = []
-
-        for i in protein_object.view_protein():
-            if i[0] <= start_amino:
-                start_amino_list.append(i)
-
-        return start_amino_list
-
-    def get_end_string(self, protein_object, end_amino):
-
-        end_amino_list = []
-
-        for i in protein_object.view_protein():
-            if i[0] > end_amino:
-                end_amino_list.append(i)
-
-        return end_amino_list
-
-    def get_previous_amino(self, start_amino, protein_object):
-
-        previous_amino = protein_object.view_protein()[start_amino - 1]
-
-        return previous_amino
-
-    def randomize(self, protein_obj):
-        string = protein_obj.view_protein_string()
-
-        protein_obj.assign_coordinates([[0,0,0,0]])
-
-        print(protein_obj.view_protein(), "protein_obj")
-
-        status = "good"
-
-        # list = [1, -1, 2, -2 ,3, -3]
-        list = [1, -1, 2, -2]
-
-        for id in range(len(string)):
-            if id == len(string) - 1:
+            if id == model.length - 1:
                 break
-            amino = protein_obj.view_protein()[id]
-            x = amino[1]
-            y = amino[2]
-            z = amino[3]
+
+            garbage, x, y, z = model.protein[id]
 
             while True:
                 move = random.choice(list)
 
-                if move == -1:
-                    print("-1")
+                if move == -1 and (x - 1, y, z) not in model.filled_coordinates():
                     x = x - 1
-                    protein_obj.assign_coordinates([[id + 1, x, y, z]])
+                    model.assign_coordinates([[id + 1, x, y, z]])
                     break
 
-                elif move == 1:
-                    print("1")
+                elif move == 1 and (x + 1, y, z) not in model.filled_coordinates():
                     x = x + 1
-                    protein_obj.assign_coordinates([[id + 1, x, y, z]])
+                    model.assign_coordinates([[id + 1, x, y, z]])
                     break
 
-                elif move == -2:
-                    print("-2")
+                elif move == -2 and (x, y - 1, z) not in model.filled_coordinates():
                     y = y - 1
-                    protein_obj.assign_coordinates([[id + 1, x, y, z]])
+                    model.assign_coordinates([[id + 1, x, y, z]])
                     break
 
-                elif move == 2:
-                    print("-2")
+                elif move == 2 and (x, y + 1, z) not in model.filled_coordinates():
                     y = y + 1
-                    protein_obj.assign_coordinates([[id + 1, x, y, z]])
+                    model.assign_coordinates([[id + 1, x, y, z]])
                     break
 
-                # else:
-                #     status = "else"
-                #     print("else", "else loop")
-                #     break
-                #     # return "failed"
+                elif move == -3 and (x, y, z - 1) not in model.filled_coordinates():
+                    z = z - 1
+                    model.assign_coordinates([[id + 1, x, y, z]])
+                    break
 
-        # print(status, "status")
-        return protein_obj
+                elif move == 3 and (x, y, z + 1) not in model.filled_coordinates():
+                    z = z + 1
+                    model.assign_coordinates([[id + 1, x, y, z]])
+                    break
 
-    def get_score(self, protein_obj):
+        return model
+
+    def get_score(self, model):
         '''
         Returns score of partial conformation
         '''
 
-        self.score = protein_obj.reward()
-        return self.score
-    #
-    # def score(self):
-    #     '''
-    #     Returns the best score of partial conformations overall
-    #     '''
-    #     return self.score
+        score = model.current_score()
+
+        return score
+
+    def score(self):
+        '''
+        Returns the best score of partial conformations overall
+        '''
+        return self.best_score
