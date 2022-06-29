@@ -24,7 +24,7 @@ Limitations: amino acids each need their own place in the grid and the path the 
 Using the guidelines above, we've implemented nine different constructive and iterative algorithm, to try and find the best possible (lowest) scores for a selection of protein strings.
 
 ## Algorithms
-### Constructive algorithms
+### Constructive
 
 #### Randomize
 This algorithm generates a 3D-folded self-avoiding protein by choosing a random move for each amino acid. There are six move options, corresponding with the directions within a 3D-grid. The amino acids are placed on the grid one at a time, starting at the beginning of the protein-string. For each amino, a random move is chosen from the list of possible moves. The coordinates of the amino acid being placed on the grid, are determined by adding a move eg. (1, 0, 0) to the coordinates of the previous amino acid eg. (2, 0, 1), thus placing the new amino acid at (3, 0, 1) on the grid. Next, these coordinates are checked against a list with coordinates currently occupied by amino acids, to prevent overlap of aminos. If the coordinates are already occupied, a new random move is chosen until this results in a free spot. If a free spot is found, the coordinates are assigned to the protein model and the algorithm moves on to the next amino acid.
@@ -44,7 +44,7 @@ This algorithm is based on a breadth first algorithm. It uses a 'beam' to keep a
 #### Branch And Bound
 This algorithm inherites functionalties from the BeamBreadth algorithm. It uses a different pruning strategy than the beam breadth algorithm. It compares scores of partial conformations that have the same length. If a score is worse than average, it has a very low chance of being kept. If the score is between average and the best score, this chance is slightly higher. Conformations with the best score have a fifty percent chance of being kept. Because this strategy generates increasingly more states with longer strings, the running-time is longer than that of the beam-breadth algorithm. This implementation was inspired by [this paper](https://www.brown.edu/Research/Istrail_Lab/_proFolding/papers/2005/bran-06.pdf).
 
-### Iterative algorithms
+### Iterative
 
 #### Hill Climber
 
