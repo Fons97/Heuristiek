@@ -46,12 +46,8 @@ This algorithm inherites functionalties from the BeamBreadth algorithm. It uses 
 
 ### Iterative
 
-#### Hill Climber
-
 #### Random Hill Climber
 This algorithm starts of by executing the randomize algorithm once to place a protein on the grid. After this, at each iteration it chooses two random amino acids and reassigns the coordinates of the amino acids in between, creating a new path that fits between the two amino acids, by calculating the Manhattan distances. The rest of the protein remains untouched. If a new path is not valid (eg. amino's are placed on the same space), the new path is discarded and new next mutation is performed on the old conformation. If the new conformation is valid, the score of the new conformation is compared to that of the old conformation. Conformations with a score of 1 of 2 worse than the old conformation have a 50% chance of being kept, because we found that this will generally generate a higher result in the end. Conformations that have the same score or a better score are being kept per definition.
-
-#### Simulated Annealing with Pull Move
 
 #### Random Simulated Annealing
 This algorithm inherites from the random hillclimber algorithm. It uses a temperature to determine a chance that a conformation with a score that is sub-optimal is being kept. This is to avoid getting stuck in a local optimum and reaching a global optimum by exploring options that have a worse score than best at the time, because there is a chance that those will lead to a better score in the end. The temperature decreases over the number of iterations. So nearer to the end, it will gradually stop accepting conformations that have a worse score.
