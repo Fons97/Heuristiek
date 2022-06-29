@@ -1,5 +1,5 @@
-# Heuristiek Protein Pow(d)er
-### By Fons van de Hare, Sunita Rijs and Lotte Notenboom, june 2022 minor Programming UvA
+# Protein Pow(d)er, minor Programming UvA, june 2022
+#### By Fons van de Hare, Sunita Rijs and Lotte Notenboom
 
 ## Case Description
 Proteins are large, complex strings of amino acids that play many important roles in all living organisms. They do most of the work in cells and are required for the structure, function, and regulation of the body’s tissues and organs. The amino acids are arranged in a certain way, 'folding' the protein. The way this folding is executed, is crucial for the correct functioning of the protein, making the protein 'stable' or low in energy. If a protein is folded incorrectly, it can cause malfunctions such as diseases.
@@ -9,7 +9,7 @@ Understanding how this folding comes about and attempting to recreate the foldin
 For our project we've studied this using The hydrophobic-polar protein folding model. This is a highly simplified model for examining protein folds in space. Even though this model abstracts away many of the details of protein folding, it is still an NP-hard problem on both 2D and 3D square lattices.
 The amino acid types are limited to hydrophobic (H), polar (P) and Cystein (C). Interactions between H-amino's, C-amino's and between H- and C-amino's contribute to the stability of proteins. The goal is to fold the proteins in such a way that produces the lowest stability (or score) possible.
 
-Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The '|' represents the line combining the amino acids in one long protein string. If amino's of type 'C' and 'H' are placed next to each other (one place apart, but NOT connected), it leads to a better stability. Each '*' represents generated points. H*H = -1 point, C*H = -1 point, C*C = -5 points.
+Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The '|' represents the line combining the amino acids in one long protein string. If amino's of type 'C' and 'H' are placed next to each other (one place apart, but NOT connected), it leads to a better stability. Each '*' represents generated points. H\*H = -1 point, C\*H = -1 point, C\*C = -5 points.
 
      P-P
      | |
