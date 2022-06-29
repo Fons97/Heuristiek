@@ -64,4 +64,4 @@ pip3 install -r requirements.txt
 <br>
 
 ## Protein folding competition
-[Here](protein.quinner.nl) you can see the results of our BeamBreadth algorithm (Pikachurine) on the folding of different proteins, varying in dimension en length. Scores can be compared to other people's algorithms.
+[Here](https://protein.quinner.nl/) you can see the results of our BeamBreadth algorithm (Pikachurine) on the folding of different proteins, varying in dimension en length. Scores can be compared to other people's algorithms.
