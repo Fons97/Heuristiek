@@ -19,7 +19,7 @@ Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The
          | |
          H-P
 
-<i>Limitations: amino acids each need their own place in the grid and the path the amino's follow must be self-avoiding.<\i>
+Limitations: amino acids each need their own place in the grid and the path the amino's follow must be self-avoiding.
 
 Using the guidelines above, we've implemented nine different constructive and iterative algorithm, to try and find the best possible (lowest) scores for a selection of protein strings.
 
@@ -28,7 +28,6 @@ Using the guidelines above, we've implemented nine different constructive and it
 
 #### Randomize
 This algorithm generates a 3D-folded self-avoiding protein by choosing a random move for each amino acid. There are six move options, corresponding with the directions within a 3D-grid. The amino acids are placed on the grid one at a time, starting at the beginning of the protein-string. For each amino, a random move is chosen from the list of possible moves. The coordinates of the amino acid being placed on the grid, are determined by adding a move eg. (1, 0, 0) to the coordinates of the previous amino acid eg. (2, 0, 1), thus placing the new amino acid at (3, 0, 1) on the grid. Next, these coordinates are checked against a list with coordinates currently occupied by amino acids, to prevent overlap of aminos. If the coordinates are already occupied, a new random move is chosen until this results in a free spot. If a free spot is found, the coordinates are assigned to the protein model and the algorithm moves on to the next amino acid.
-IF NO SPACES ARE FREE...... we're fucked
 
 #### Greedy
 This algorithm bases it's moves on what move gets the highest score at that time. It's a depth-first approach without look-ahead.
