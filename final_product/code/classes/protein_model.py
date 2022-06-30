@@ -4,8 +4,6 @@ This model contains all data and functionalities needed to run the algorithms to
 
 import copy
 
-from algorithms.randomize import randomize
-
 
 class Model:
 

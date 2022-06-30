@@ -20,9 +20,9 @@ import random
 import math
 import copy
 
-from algorithms import randomize
+from .randomize import randomize
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
 class RandomClimber():
@@ -217,7 +217,7 @@ class RandomClimber():
         '''
         return self.best_score
 
-    def run(self, iterations: int) -> Model:
+    def run(self, iterations: int=1000) -> Model:
 
         self.iterations = iterations
 

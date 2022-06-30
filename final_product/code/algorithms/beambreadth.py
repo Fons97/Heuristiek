@@ -14,7 +14,7 @@ import random
 import queue
 import copy
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
 class BeamBreadth:

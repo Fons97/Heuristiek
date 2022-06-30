@@ -14,9 +14,9 @@ import math
 import copy
 import itertools
 
-from algorithms.climber import RandomClimber
+from code.algorithms.climber import RandomClimber
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
 class SimulatedAnnealing(RandomClimber):
@@ -33,25 +33,26 @@ class SimulatedAnnealing(RandomClimber):
         If conformations of the same score are generated a number of times in a row,
         the 'temperature' is recalculated
         '''
-        self.T = self.T - (self.T0 / (self.iterations * 0.5))
+        self.T = self.T - (self.T0 / (self.iterations * 0.8))
 
     def update_score(self, model: Model) -> None:
         '''
         Updates scores and self based on new conformation
         '''
-        new_protein = model.copy()
-        new_score = self.get_score(new_protein)
+        if self.is_valid(model) == True:
+            new_protein = model.copy()
+            new_score = self.get_score(new_protein)
 
-        # Save best conformations created so far
-        if new_score < self.best_score:
-            self.best_score = new_score
-            self.best_placement = new_protein
+            # Save best conformations created so far
+            if new_score < self.best_score:
+                self.best_score = new_score
+                self.best_placement = new_protein
 
-        # If new score isn't the best score so far, determine whether to keep current conformation
-        self.sub_optimal_score(new_protein, new_score)
+            # If new score isn't the best score so far, determine whether to keep current conformation
+            self.sub_optimal_score(new_protein, new_score)
 
-        # Recalculate the temperature
-        self.update_temperature()
+            # Recalculate the temperature
+            self.update_temperature()
 
     def sub_optimal_score(self, model: Model, score: int) -> None:
         '''
@@ -65,6 +66,6 @@ class SimulatedAnnealing(RandomClimber):
 
         if random.random() < probability:
 
-            if self.is_valid(model) == True:
-                self.current_score = self.get_score(model)
-                self.current_placement = model
+            protein = model.copy()
+            self.current_score = self.get_score(protein)
+            self.current_placement = protein

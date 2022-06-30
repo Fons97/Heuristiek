@@ -1,6 +1,6 @@
 from .depth_first import DepthFirst
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
 class BreadthFirst(DepthFirst):

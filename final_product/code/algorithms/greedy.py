@@ -8,7 +8,7 @@ Randomize Algorithm for the Protein Folding Problem in the HP Lattice Model
 
 import random
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
 class Greedy:
@@ -18,6 +18,26 @@ class Greedy:
         self.dimension = []
 
         self.set_dimension(dimension)
+
+    def set_dimension(self, dimension: int) -> list[int, ...]:
+        '''
+        Returns different move options, depending on whether a protein will be folded in
+        2D or 3D
+        '''
+        if dimension == 2:
+            self.dimension = [1, -1, 2, -2]
+        elif dimension == 3:
+            self.dimension = [1, -1, 2, -2, 3, -3]
+
+        return self.dimension
+
+    def get_score(self, model: Model) -> int:
+        '''
+        Returns score of partial conformation
+        '''
+        score = model.current_score()
+
+        return score
 
     def run(self) -> Model:
 

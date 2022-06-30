@@ -7,12 +7,12 @@ To choose an option, just enter the right integer.
 import csv
 
 from code.algorithms.randomize import randomize
-from code.algorithms.greedy import greed
+from code.algorithms.greedy import Greedy
 from code.algorithms.depth_first import DepthFirst
 from code.algorithms.branchandbound import BranchAndBound
 from code.algorithms.beambreadth import BeamBreadth
-from code.algorithms.simannealing import SimulatedAnnealing
-from code.algorithms.climber import Climber
+from code.algorithms.simulatedannealing import SimulatedAnnealing
+from code.algorithms.climber import RandomClimber
 from code.algorithms.breadthfirst import BreadthFirst
 
 from code.tools.loader import load_protein
@@ -20,7 +20,7 @@ from code.tools.plotters import plot_3d
 
 from code.classes.protein_model import Model
 
-if name == "__main__":
+if __name__ == "__main__":
     print("Hello and welcome to our program!")
 
     while True:
@@ -30,7 +30,7 @@ if name == "__main__":
             break
 
     str(string_number)
-    string = load_protein("proteins.txt", string_number)
+    string = load_protein("data/proteins.txt", string_number)
 
     # Create Model
     protein_model = Model(string)
@@ -55,8 +55,8 @@ if name == "__main__":
                 "2. Breadth first \n",
                 "3. Branch and bound \n",
                 "4. Beam breadth \n",
-                "5. randomize \n",
-                "6. greedy \n") 
+                "5. Randomize \n",
+                "6. Greedy \n")
 
             alg = input("> ")
             alg = int(alg)
@@ -67,7 +67,7 @@ if name == "__main__":
         while True:
             print("Now please, if you want to fold the protein in 2d or 3d. \n",
                 "2. 2d \n",
-                "3. 3d \n") 
+                "3. 3d \n")
 
             dimension = input("> ")
             dimension = int(dimension)
@@ -78,7 +78,7 @@ if name == "__main__":
         while True:
             print("Now please, enter an algorithm you want to use. The options are: \n",
                 "7. Hill climber \n",
-                "8. Simulated annealing \n")        
+                "8. Simulated annealing \n")
             alg = input("> ")
             alg = int(alg)
             if alg == 7 or alg == 8:
@@ -107,29 +107,28 @@ if name == "__main__":
         algorithm = BeamBreadth(protein_model, dimension)
 
     elif alg == 5:
-        algorithm = randomize(protein_model, dimension)
+        solution = randomize(protein_model, dimension)
 
     elif alg == 6:
-        algorithm = greed(protein_model, dimension)
+        algorithm = Greedy(protein_model, dimension)
 
     elif alg == 7:
-        for i in range(100):
-            algorithm = Climber(protein_model)
+            algorithm = RandomClimber(protein_model)
 
     elif alg == 8:
         algorithm = SimulatedAnnealing(protein_model)
 
     # Run algorithm
     if con_or_it == 1:
-        solution = algorithm.run()
+        if alg != 5:
+            solution = algorithm.run()
 
     else:
         for i in range(1):
             solution = algorithm.run(iterations)
 
-    # Print score
-    print("Score:", solution.score())
+
+    print("Score:", solution.current_score())
 
     # Plot solution
     plot_3d(solution, "mand")
-

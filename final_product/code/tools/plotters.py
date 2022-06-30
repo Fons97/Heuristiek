@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-from collections import Counter
 
-from classes.protein_model import Model
-from algorithms.hillclimber import HillClimber
+from code.classes.protein_model import Model
+from code.algorithms.climber import RandomClimber
 
 
 def make_histogram(model: Model, scoring: list[int, ...], filename: str) -> None:

@@ -7,76 +7,64 @@ Randomize Algorithm for the Protein Folding Problem in the HP Lattice Model
 '''
 
 import random
+import copy
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 
-class Randomize:
+def randomize(model: Model, dimension: int=3) -> Model:
 
-    def __init__(self, model: Model, dimension: int=3):
-        self.model = model.copy()
-        self.dimension = []
+    # Set dimension
+    if dimension == 2:
+        dimension = [1, -1, 2, -2]
 
-        self.set_dimension(dimension)
+    elif dimension == 3:
+        dimension = [1, -1, 2, -2, 3, -3]
 
-    def set_dimension(self, dimension: int) -> list[int, ...]:
-        '''
-        Returns different move options, depending on whether a protein will be folded in
-        2D or 3D
-        '''
-        if dimension == 2:
-            self.dimension = [1, -1, 2, -2]
-        elif dimension == 3:
-            self.dimension = [1, -1, 2, -2, 3, -3]
+    # Places each amino acid on grid at random, so that protein is still valid
+    for id in range(1, model.length):
 
-        return self.dimension
+        # Stop at last amino in chain
+        if id == model.length - 1:
+            break
 
-    def run(self) -> Model:
+        # Get coordinates of last placed amino on grid
+        garbage, x, y, z = model.protein[id]
 
-        # Places each amino acid on grid at random, so that protein is still valid
-        for id in range(1, self.model.length):
+        # Place next amino on grid if not yet occupied by an amino, keep going until a free space is found
+        while True:
+            move = random.choice(dimension)
 
-            # Stop at last amino in chain
-            if id == self.model.length - 1:
+            filled_coords = model.filled_coordinates()
+
+            if move == -1 and (x - 1, y, z) not in filled_coords:
+                x -= 1
+                model.assign_coordinates([[id + 1, x, y, z]])
                 break
 
-            # Get coordinates of last placed amino on grid
-            garbage, x, y, z = self.model.protein[id]
+            elif move == 1 and (x + 1, y, z) not in filled_coords:
+                x += 1
+                model.assign_coordinates([[id + 1, x, y, z]])
+                break
 
-            # Place next amino on grid if not yet occupied by an amino, keep going until a free space is found
-            while True:
-                move = random.choice(self.dimension)
+            elif move == -2 and (x, y - 1, z) not in filled_coords:
+                y -= 1
+                model.assign_coordinates([[id + 1, x, y, z]])
+                break
 
-                filled_coords = self.model.filled_coordinates()
+            elif move == 2 and (x, y + 1, z) not in filled_coords:
+                y += 1
+                model.assign_coordinates([[id + 1, x, y, z]])
+                break
 
-                if move == -1 and (x - 1, y, z) not in filled_coords:
-                    x -= 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
+            elif move == -3 and (x, y, z - 1) not in filled_coords:
+                z -= 1
+                model.assign_coordinates([[id + 1, x, y, z]])
+                break
 
-                elif move == 1 and (x + 1, y, z) not in filled_coords:
-                    x += 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
+            elif move == 3 and (x, y, z + 1) not in filled_coords:
+                z += 1
+                model.assign_coordinates([[id + 1, x, y, z]])
+                break
 
-                elif move == -2 and (x, y - 1, z) not in filled_coords:
-                    y -= 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
-
-                elif move == 2 and (x, y + 1, z) not in filled_coords:
-                    y += 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
-
-                elif move == -3 and (x, y, z - 1) not in filled_coords:
-                    z -= 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
-
-                elif move == 3 and (x, y, z + 1) not in filled_coords:
-                    z += 1
-                    self.model.assign_coordinates([[id + 1, x, y, z]])
-                    break
-
-        return self.model
+    return model

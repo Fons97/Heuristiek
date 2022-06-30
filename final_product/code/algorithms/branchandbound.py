@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from .beambreadth import BeamBreadth
 
-from classes.protein_model import Model
+from code.classes.protein_model import Model
 
 class BranchAndBound(BeamBreadth):
 
