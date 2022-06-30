@@ -1,5 +1,5 @@
-# Protein Pow(d)er, minor Programming UvA, june 2022
-#### By Fons van de Hare, Sunita Rijs and Lotte Notenboom
+# Protein Pow(d)er 
+#### Made by Fons van de Hare, Sunita Rijs and Lotte Notenboom, minor Programming UvA, june 2022
 
 ## Case Description
 Proteins are large, complex strings of amino acids that play many important roles in all living organisms. They do most of the work in cells and are required for the structure, function, and regulation of the body’s tissues and organs. The amino acids are arranged in a certain way, 'folding' the protein. The way this folding is executed, is crucial for the correct functioning of the protein, making the protein 'stable' or low in energy. If a protein is folded incorrectly, it can cause malfunctions such as diseases.
@@ -59,5 +59,5 @@ pip3 install -r requirements.txt
 ```
 <br>
 
-## Protein folding competition
-[Here](https://protein.quinner.nl/) you can see the results of our BeamBreadth algorithm (Pikachurine) on the folding of different proteins, varying in dimension en length. Scores can be compared to other people's algorithms.
+## Protein Folding Competition
+[Here](https://protein.quinner.nl/) you can see the results of our BeamBreadth algorithm (Pikachurine) on the folding of different proteins, varying in dimension en length. Scores can be compared to other people's algorithms. 
