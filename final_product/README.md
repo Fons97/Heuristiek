@@ -61,19 +61,26 @@ This algorithm inherites functionality from the Random Hill Climber algorithm. I
 
 ## Getting started
   
-1. Install requirements via
+1. Change into the program folder 
+```
+cd final_product
+```
+<br>
+
+3. Install requirements 
 ```
 pip3 install -r requirements.txt
 ```
 <br>
 
-2. Execute the program by running 
+4. Execute the program by running 
 ```
 python3 main.py
 ```
 <br>
   
-3. This will launch a menu that will take you through some questions, eg. what protein string you would like to fold and what algorithm is used to fold it with. 
+5. This will launch a menu that will take you through some questions, eg. what protein string you would like to fold and what algorithm is used to fold it with. 
+<br>
 
 4. If you would like to try the program on protein strings not included in the sample, you could substitute them for any string you want consisting of 'H', 'P' and 'C' by replacing one of the strings in the file 'data/proteins.txt'.
 
