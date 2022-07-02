@@ -63,7 +63,6 @@ class BranchAndBound(BeamBreadth):
         - Score: partial conformations with best scores have a fifty percent chance of being kept.
           Conformations that score between best and average have eighty percent chance of being pruned.
           Conformations with a score worse than average have ninety percent chance of being pruned.
-        ! Lower scores are better scores. Keep this in mind when reading the if-statements below
         '''
         amino = model.protein[index][0]
 
