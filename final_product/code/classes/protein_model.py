@@ -45,39 +45,44 @@ class Model:
     def current_score(self) -> int:
         '''
         Calculates the score of current placement of amino acids
-        COMMENTSCOMMENTSCOMMENTSCOMMENTS
         '''
         current_state = []
-        point_list = []
-
+        points = []
+        
+        # Add aminos with coordinates to current state list
         for key in self.protein:
             if self.protein[key][1] != None:
                 aminos = [key, self.protein[key][0], self.protein[key][1], self.protein[key][2], self.protein[key][3]]
                 current_state.append(aminos)
-
+        
+        # Add aminos that can generate points to points list 
         for amino in current_state:
             if amino[1] != "P":
-                    point_list.append(amino)
+                    points.append(amino)
 
         current_score = 0
-        counting_variable = 0
-
-        for amino_coords in point_list:
+        counter = 0
+        
+        # Compare aminos in points list to see if they've generated points 
+        for amino_coords in points:
             amino_id, amino_type, amino_x, amino_y, amino_z  = amino_coords
 
-            counting_variable += 1
+            counter += 1
 
-            for compare_coords in point_list[counting_variable:]:
+            for compare_coords in points[counter:]:
                 compare_id, compare_type, compare_x, compare_y, compare_z = compare_coords
-
+                
+                # Filter out aminos that are next to each other in the protein, because they don't generate points  
                 if amino_id - compare_id <= 1 and amino_id - compare_id >= -1:
                     continue
-
+                
+                # Generate coord structure that shows how far away aminos are from each other on grid 
                 temp_x = amino_x - compare_x
                 temp_y = amino_y - compare_y
                 temp_z = amino_z - compare_z
                 temp = (temp_x, temp_y, temp_z)
-
+                
+                # Add points for aminos that are one space away from each other 
                 if (temp == (1,0,0) or temp == (-1,0,0) or temp == (0,1,0) or temp == (0,-1,0) or temp == (0,0,1) or temp == (0,0,-1)):
                     if amino_type == compare_type:
                         if amino_type == "H":
@@ -104,7 +109,11 @@ class Model:
     def step_order(self) -> list[int]:
         '''
         Converts coordinates into directions and returns the directions
-        COMMENTSCOMMENTSCOMMENTS
+        Stepping order is defined as follows:
+        - Positive movement on x-axis: 1, negative movement on x-axis: -1
+        - Positive movement on y-axis: 2, negative movement on y-axis: -2
+        - Positive movement on z-axis: 3, negative movement on z-axis: -3
+        Stepping_order is also used to generate a CSV file to show what steps are made between aminos 
         '''
         stepping_order = []
 
@@ -114,7 +123,8 @@ class Model:
 
             garbage ,I_x, I_y, I_z = self.protein[index]
             garbage ,II_x, II_y, II_z = self.protein[index + 1]
-
+            
+            # Generates the stepping order 1, -1, -2, 2, -3, 3 
             if II_x - I_x != 0:
                 direction = II_x - I_x
             elif II_y - I_y != 0:
