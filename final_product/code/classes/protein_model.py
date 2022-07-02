@@ -1,5 +1,6 @@
 '''
 This model contains all data and functionalities needed to run the algorithms to fold proteins
+It represents the data structure of a protein folding
 '''
 
 import copy
