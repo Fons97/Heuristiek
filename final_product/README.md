@@ -17,9 +17,9 @@ Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The
 
                                                              P-P
                                                              | |
-                                                             P H   H-C\*H
-                                                             | \*   | | |
-                                                             P-H-H C\*C-P
+                                                             P H   H-C*H
+                                                             | *   | | |
+                                                             P-H-H C*C-P
                                                                  | |
                                                                  H-P
 
