@@ -3,7 +3,7 @@ Beam Breadth Search algorithm for the Protein Folding Problem in the HP Lattice 
 
 - Based on a breadth first search strategy
 - Limits search options by only keeping track of results that have generated the
-  best scores so far - this is set by beam_size
+  best scores so far - this is set by beam_size (default is 300)
 - By using a larger beam_size, more options are considered, so chances of reaching
   a better score are greater, however this increases the running time of the algorithm
 - This algorithm also limits the number of options (and thus the running time) by decreasing
@@ -27,7 +27,7 @@ class BeamBreadth:
         self.top_score = 0
         self.best_placement = None
         self.nr_of_states = 0
-        self.beam_size = 200
+        self.beam_size = 300
         self.p1 = 0.5
 
         self.set_dimension(dimension)
@@ -47,8 +47,8 @@ class BeamBreadth:
     def get_index(self, model: Model) -> int:
         '''
         Returns the index or id of the last placed amino node
-        If the current node is last node of protein, return last node message
-        Last node message is needed to prevent the algorithm from trying to place
+        If the current node is last node of protein, return -1
+        This is needed to prevent the algorithm from trying to place
         a non-existent amino after the last amino acid in chain
         '''
         last_amino = False
@@ -93,7 +93,7 @@ class BeamBreadth:
             # Determine current overall worst score
             worst_score = max(self.scores)
 
-            # If new score is equal to current worse, give it x percent chance to be kept
+            # If new score is equal to current worse, give it 50 percent chance to be kept
             if score == worst_score:
 
                 if random.random() > self.p1:
@@ -107,7 +107,7 @@ class BeamBreadth:
                     self.scores.remove(max(self.scores))
                     self.update_scores(model, score)
 
-        # Add all new partial conformation to queue to build further upon when beam size is not yet reached
+        # Add all new partial conformations to queue to build further upon when beam size is not yet reached
         else:
             self.update_scores(model, score)
 
