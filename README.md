@@ -15,13 +15,13 @@ The amino acid types are limited to hydrophobic (H), polar (P) and cystein (C). 
 Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The '|' represents the line combining the amino acids in one long protein string. If amino's of type 'C' and 'H' are placed next to each other (one space apart on the grid, but NOT connected), this leads to an increase in stability. Each '\*'-connection represents a bond formed between amino acids that generate points. H\*H = -1 point, C\*H = -1 point, C\*C = -5 points.
 
 
-                                                                 P-P
+                                                             P-P
+                                                             | |
+                                                             P H   H-C\*H
+                                                             | \*   | | |
+                                                             P-H-H C\*C-P
                                                                  | |
-                                                                 P H   H-C\*H
-                                                                 | \*   | | |
-                                                                 P-H-H C\*C-P
-                                                                     | |
-                                                                     H-P
+                                                                 H-P
 
 
 Limitations: amino acids each need their own place/coordinates on the grid and the path the amino's follow must be self-avoiding.
