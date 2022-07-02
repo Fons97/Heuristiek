@@ -1,7 +1,7 @@
 '''
 Simulated Annealing algorithm for the Protein Folding Problem in the HP Lattice Model
 
-- This Simulated Annealing algorithm inherites functions from the Random HillClimber algorithm.
+- Class inherites functions from the Random HillClimber algorithm.
 - This is done by lowering the 'temperature' when the iterations increase. This heuristic is
   performed in the assumption that to get out of a local optimum and reach a global optimum,
   conformations with lower scores should be evaluated.
