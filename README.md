@@ -24,7 +24,7 @@ Below is a 2D-example of a protein folding of the protein 'HPPPPHHHPCHCCPH'. The
                                                                        H-P
 
 
-<i>Limitations: amino acids each need their own place/coordinates on the grid and the path the amino's follow must be self-avoiding.<\i>
+Limitations: amino acids each need their own place/coordinates on the grid and the path the amino's follow must be self-avoiding.
   
 Using the guidelines above, we've implemented eight different constructive and iterative algorithms to try and find the best possible (lowest) scores for a selection of protein strings. They are explained below. 
   
