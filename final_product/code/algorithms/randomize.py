@@ -1,7 +1,7 @@
 '''
 Randomize Algorithm for the Protein Folding Problem in the HP Lattice Model
 
-- This algorithm will randomly fold a protein in a constructive manner
+- This function will randomly fold a protein in a constructive manner
 - It receives a protein model and returns the folded version
 - This function can be called before an iterative algoritm is run, to generate a starting state
 '''
