@@ -1,5 +1,5 @@
 '''
-- Depth First Algorithm for the Protein Folding Problem in the HP Lattice Model
+Depth First Algorithm for the Protein Folding Problem in the HP Lattice Model
 
 - Navigates down the possible state tree, using a depth first search strategy
 - Covers the entire state-space
@@ -8,6 +8,7 @@
 import copy
 
 from code.classes.protein_model import Model
+
 
 class DepthFirst:
 
