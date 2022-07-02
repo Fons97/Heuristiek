@@ -1,8 +1,8 @@
 # Heuristics Protein Pow(d)er
 ### By Fons van de Hare, Sunita Rijs and Lotte Notenboom, june 2022 
 
-![Image of 3D folded protein](data/visualizations/3D_folding.png)
-![Image of 2D folded protein](doc/visualizations/2D_folding.png)
+![Image of 3D folded protein](final_product/data/visualizations/3D_folding.png)
+![Image of 2D folded protein](final_product/data/visualizations/2D_folding.png)
 
 ## Case Description
 Proteins are large, complex strings of amino acids that play many important roles in all living organisms. They do most of the work in cells and are required for the structure, function, and regulation of the body’s tissues and organs. The amino acids are arranged in a certain way, 'folding' the protein to it's final form. The way this folding is executed, is crucial for the correct functioning of the protein, making the protein 'stable' or low in energy. If a protein is folded incorrectly, it can cause malfunctions such as diseases.
