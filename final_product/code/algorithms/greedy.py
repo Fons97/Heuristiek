@@ -1,9 +1,9 @@
 """
 Randomize Algorithm for the Protein Folding Problem in the HP Lattice Model
 
-- It takes a protein string, checks in a constructive manner the placement that
+- Takes a protein string, checks in a constructive manner the placement that
   generates the best score at that moment.
-- If there is no best option, it will choose a move at random.
+- If there is no best option, chooses a move at random.
 """
 
 import random
