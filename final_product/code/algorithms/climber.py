@@ -1,19 +1,18 @@
 '''
 Random HillClimber algorithm for the Protein Folding Problem in the HP Lattice Model
 
-- This itterative algorithm chooses and reassigns random parts of a protein that is already created
-  and placed in the grid.
-- The algorithm uses depth-first search to create a new possible path for the
-  protein-part, as soon as a path is found, new coordinates are assigned and no other
-  paths are considered. The rest of the protein is left intact.
+- Chooses and reassigns random parts of a protein that is already created
+  and placed in the grid
+- Uses depth-first search to create a new possible path for the protein part. As soon 
+  as a path is found, new coordinates are assigned and no other paths are considered. 
+  The rest of the protein is left intact
 - The new conformation is then evaluated, if the new score is better than the old
   score, the new conformation is kept and another part of the protein is randomly
-  folded. If the score is lower, the old conformation is kept and randomly folded. This
-  is the basis of the HillClimber algorithm.
-- We've slightly altered the algorithm above, based on the heuristic assumption that
+  folded. If the score is lower, the old conformation is kept and randomly folded. 
+- We've slightly altered the algorithm based on the heuristic assumption that
   keeping conformations with a score slightly below sub-optimal will lead to a better
   score in the end. However, the conformation that has so far generated the best score, is
-  always stored just in case.
+  always stored.
 '''
 
 import random
@@ -45,7 +44,6 @@ class RandomClimber():
         Returns different move options, depending on whether a protein will be folded in
         2D or 3D
         '''
-
         self.set_moves(dimension)
 
         if dimension == 2:
