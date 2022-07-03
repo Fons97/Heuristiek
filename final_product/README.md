@@ -79,10 +79,12 @@ python3 main.py
 ```
 <br>
   
-5. This will launch a menu that will take you through some questions, eg. what protein string you would like to fold and what algorithm is used to fold it with. 
+5. This will launch a menu that will take you through some questions, eg. what protein string you would like to fold and what algorithm is used to fold it with. The score is outputted to the terminal and a window will pop up showing a 2D or 3D visualization of the solution
 <br>
 
-4. If you would like to try the program on protein strings not included in the sample, you could substitute them for any string you want consisting of 'H', 'P' and 'C' by replacing one of the strings in the file 'data/proteins.txt'.
+6. The program will also generate a csv-file called 'output.csv' in the 'data' folder, containing the stepping order of the aminos.  
+
+7. If you would like to try the program on protein strings not included in the sample, you could substitute them for any string you want consisting of 'H', 'P' and 'C' by replacing one of the strings in the file 'data/proteins.txt'.
 
 ## Approach and retrospect 
 During our research and tweaking of the algorithms, we found out that our biggest challenge was the time it took to run the program, because the running time increases exponentionally when protein strings get longer. Because we got the best results by letting the algorithm fold lots of different conformations, we started optimizing and refactoring our code. We did this by doing profiling runs on our code to see what actions took up a lot of running time (results of the profiling runs can be viewed in the [data map](https://github.com/Fons97/Heuristiek/tree/ultimate/final_product/data/visualizations)). We found out that deepcopying took up a lot of time, so we changed our code and added a copy function to our protein Model. We profiled the program again and the running time had decreased from 42.6 seconds to 3.81 seconds.
