@@ -128,6 +128,9 @@ if __name__ == "__main__":
 
     # Print score to terminal
     print("Score:", solution.current_score())
+    
+    # Output stepping order to csv file
+    create_csv(string, solution)
 
     # Plot a visualization of the solution
     plot_3d(solution, "plot_visualization")
