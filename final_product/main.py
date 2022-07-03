@@ -15,6 +15,7 @@ from code.algorithms.breadthfirst import BreadthFirst
 
 from code.tools.loader import load_protein
 from code.tools.plotters import plot_3d
+from code.tools.writer import create_csv
 
 from code.classes.protein_model import Model
 
